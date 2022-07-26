@@ -195,3 +195,73 @@ git commit -m "added allauth templates and base template"
 then, just update it to this:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/dd3dc22adcb97c3f3dce8a047243fceeee517348/templates/base.html)
 
+git add .
+git commit -m "added allauth templates and base template"
+
+"so we have a pretty robust base template, now let's create a home app
+and extend the base template to get our home page up and running."
+
+`python3 manage.py startapp home`
+
+We need a templates directory inside the home app:
+`mkdir -p home/templates/home` ("-p" = make parents as required)
+
+right-click that inner home directory, and create a new file called "index.html"
+in index.html:
+```
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1 class="display-4 text-success">It works!</h1>
+{% endblock %}
+```
+we need a view to render this index template page. go to views.py:
+```
+def index(request):
+    """ A view to return the index page """
+
+    return render(request, 'home/index.html')
+```
+create a new file called urls.py in the home app. add this:
+```
+from django.contrib import admin
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='home')
+]
+```
+then, add `path('', include('home.urls')),` to the project/main "urls.py"
+
+in "settings.py", add `'home',` to our "INSTALLED_APPS" list.
+"then add both the route templates directory.
+And our custom allauth directory to the template dirs setting." to look like this:
+
+```
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request', # required by allauth, do not delete
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+test it. `python3 manage.py runserver`
+
+git add .
+git commit -m "added home app and templates"
+git push
