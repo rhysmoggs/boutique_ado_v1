@@ -163,5 +163,35 @@ into the newly created "base.html"
 
 then, change the jquery (see above at the big chunk of text with the jQuery links) from the pasted link, to the new one
 
-follow this - easier. but, make sure the jquery line isn't the one in this github repo, but to swap it out like instructions above:
+so it looks like this (moved scripts from bottom to head section, added meta, changed title etc):
+
+```
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+    <title>Boutique Ado</title>
+  </head>
+  <body>
+
+  </body>
+</html>
+```
+
+git add .
+git commit -m "added allauth templates and base template"
+
+then, just update it to this:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/dd3dc22adcb97c3f3dce8a047243fceeee517348/templates/base.html)
+
