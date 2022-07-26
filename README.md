@@ -98,3 +98,70 @@ ACCOUNT_USERNAME_MIN_LENGTH = 4
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 ```
+
+run it again, and go to admin login.
+under Accounts, click on Email Addresses > Add Email Address (far right button) > User (select 
+username from list that popups), enter email in "E-mail address:" input, and tick both "verified"
+and "primary". Save.
+in CLI:
+`pip3 freeze > requirements.txt`
+`mkdir templates`
+`mkdir templates/allauth`
+then git add .
+git commit -m "setup allauth"
+and git push
+
+
+Base Template
+"
+Bootstrap 4 links
+Bootstrap recently released their newest version: Bootstrap 5. This means that the standard getbootstrap.com link now defaults to the newest version, which includes updated links, scripts and classes that will not work when following along with this video series.
+In order to follow along with these videos, you must ensure you are using the older Bootstrap 4 documentation, which you can find here: https://getbootstrap.com/docs/4.6/getting-started/introduction/
+Please bookmark this link to use any time you need to access the Bootstrap documentation during this video walkthrough, including the links you need to install it.
+The Bootstrap Github Repository can be accessed here: https://github.com/twbs/bootstrap
+
+Please import the minified jQuery library
+While following this videos, please ensure that you import the minified version of jQuery into this project. The slim versions do not include all the features you need for this project
+
+This means that you will need to replace this line from the Starter Template:
+
+`<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>`
+with the following line:
+`<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>`
+Note: Make sure you change the line above in the same place where the Starter Template has it. The jQuery library must be loaded before Popper and Bootstrap for everything to work correctly."
+soooooo,
+
+"Because we'll eventually want to customize the Allauth login templates
+we'll start this video by making copies of them in our own templates/allauth directory.
+This will ensure that our templates take precedence over the built-in ones.
+You might recall from the earlier Django videos that anything we install with pip
+ends up in the site-packages directory.
+So that's where Allauth and all its built-in templates are.
+We can copy everything we need with the command (type this in CLI):
+`cp -r ../.pip-modules/lib/python3.7/site-packages/allauth/templates/* ./templates/allauth`
+explanation (don't add these into CLI):
+`cp -r` = to copy recursively
+`../` = to go up one level from where we are right now
+`python3.7` = may be different depending on which version of python you're using.
+so start typing pyth...then hit tab and it'll auto complete and give your version of python.
+`/*` = copy everything in this directory.
+`/templates/allauth/` = copy into this directory
+This gives us a copy of every single Allauth template so we can customize them at will."
+
+"I don't plan on customizing "openid" or the "tests" templates though.So I'm going to delete those 
+folders which will just revert those templates back to their Allauth defaults."
+Delete those.
+
+"we need a base template for our project itself.
+So let's go ahead and right-click the project level templates directory.
+And create a new file called 'base.html'"
+
+BOOTSTRAP
+bootstrap (this setup uses an older version of bootstrap...4.6. use a newer if you wish):
+copy the starter template, found here (https://getbootstrap.com/docs/4.6/getting-started/introduction/#starter-template)
+into the newly created "base.html"
+
+then, change the jquery (see above at the big chunk of text with the jQuery links) from the pasted link, to the new one
+
+follow this - easier. but, make sure the jquery line isn't the one in this github repo, but to swap it out like instructions above:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/dd3dc22adcb97c3f3dce8a047243fceeee517348/templates/base.html)
