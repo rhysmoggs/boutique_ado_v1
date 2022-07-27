@@ -280,3 +280,52 @@ git add .
 git commit -m "added main page header"
 
 `python3 manage.py runserver`
+`mkdir static`
+`mkdir media`
+`mkdir static/css`
+create a "base.css" file in the newly created css folder. add this:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e3ce173e7475dd8e9c7f51a3af3eaa888c29cb79/static/css/base.css)
+
+copy the "homepage_background_cropped.jpg" file into the media folder created just now.
+(https://github.com/Code-Institute-Solutions/boutique_ado_images) < found in the pics folder
+
+update the "base.html" line (1st div) after the header to be:
+`<div id="topnav" class="row bg-white pt-lg-2 d-none d-lg-flex">`
+
+import "lato" google fonts into "base.html", not the css file!..in the block corecss, bottom of list in there.
+also, add a "base.css" link under that too:
+`<link href="{% static 'css/base.css' %}" rel="stylesheet">`
+also, add your fontawesome kit code (log in to fontawesome, find kits, click it, link it) to the top of the corejs block in the same file.
+
+go to "settings.py" and update the static files to be:
+```
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+```
+and add media files, underneath the added code:
+```
+# Media files (Uploaded media images will go here)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+```
+"Lastly to allow Django to see the MEDIA_URL.
+We need to go to urls.py
+Import our settings and the static function from django.conf.urls.static
+And then use the static function to add the MEDIA_URL to our list of URLs."
+go to "urls.py", and update it to be:
+```
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
+    path('', include('home.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+git add .
+git commit -m "completed homepage header and css"
+git push
