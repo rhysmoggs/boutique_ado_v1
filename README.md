@@ -265,3 +265,18 @@ test it. `python3 manage.py runserver`
 git add .
 git commit -m "added home app and templates"
 git push
+
+go to index.html in the home app. update it to look like:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/6a51b60c029c78540dd10d7c5b241eaa902aa000/home/templates/home/index.html)
+
+
+git add .
+git commit -m "Added homepage content"
+
+got to base.html template, update it to look like (just copy+paste the header. as the scripts are different, from previous steps):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ff562b96deb39f74dd41cc7d00beea0e3b21061a/templates/base.html)
+
+git add .
+git commit -m "added main page header"
+
+`python3 manage.py runserver`
