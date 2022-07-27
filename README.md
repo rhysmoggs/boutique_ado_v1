@@ -329,3 +329,28 @@ urlpatterns = [
 git add .
 git commit -m "completed homepage header and css"
 git push
+
+NAVBAR
+go to "base.html" and updated header section to be:
+(https://github.com/Code-Institute-Solutions/Boutique-Ado/blob/master/05-The-Home-Page/Main-Site-Navigation/templates/base.html)
+
+"I'm gonna create a directory in the templates folder commonly found in larger web projects called includes.
+This gives us a nice place where we can create small HTMLsnippets
+and then include them in the base template using Django."
+
+`mkdir templates/includes`
+creates two files in that new folder: "main-nav.html" and "mobile-top-header.html"
+update them both to be:
+(https://github.com/Code-Institute-Solutions/Boutique-Ado/tree/master/05-The-Home-Page/Main-Site-Navigation/templates/includes)
+
+run server to test.
+
+add the class, just under the .border-black class in the "base.css" file
+```
+.bg-black {
+    background: #000 !important;
+}
+```
+
+git add .
+git commit -m "
