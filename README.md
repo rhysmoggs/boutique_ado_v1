@@ -508,3 +508,51 @@ git add .
 git commit -m "added products views and templates"
 git push
 
+update products.html to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e3c29afef63a8e5a8dae3fdc6b1277eb32206dbc/products/templates/products/products.html)
+and base.css to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e3c29afef63a8e5a8dae3fdc6b1277eb32206dbc/static/css/base.css)
+
+git add .
+git commit -m "started product template"
+git push
+
+VIEW INDIVIDUAL PRODUCT DETAILS
+in templates > includes > "main-nav.html", add: `{% url 'products' %}`
+to inside the href of the "All Products" a tag, under the All Products section.
+
+in home > templates > home > "index.html", add: `{% url 'products' %}`
+to inside the href of the "Shop Now" a tag.
+
+"To create the product details page we need a new view that will take the product_id as a
+parameter and return the template including the product."
+
+in products > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/283ce70483507eda1ae31143c8450b9f52cdb5b1/products/views.py)
+
+in products > "urls.py" add this:
+`path('<product_id>', views.product_detail, name='product_detail'),` to the 'urlpatterns' (make sure comma on end of all paths)
+
+create a template, so, duplicate "products.html" template, rename it to "product_detail.html" and update it to look like:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/283ce70483507eda1ae31143c8450b9f52cdb5b1/products/templates/products/product_detail.html)
+
+in the "products.html" file, add `{% url 'product_detail' product.id %}` to both empty hrefs uninside the "{% if product.image %}" section. 
+
+update "base.css" to add a media query at the bottom:
+```
+/* pad the top a bit when navbar is collapsed on mobile */
+@media (max-width: 991px) {
+    .header-container {
+        padding-top: 116px;
+    }
+
+    body {
+        height: calc(100vh - 116px);
+    }
+}
+```
+
+git add .
+git commit -m "added product details functionality
+git push
+
