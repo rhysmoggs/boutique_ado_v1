@@ -420,5 +420,59 @@ And our migrations applied. The only thing left to do is actually use these fixt
 `python3 manage.py runserver` then /admin in browser. log in > products - all there.
 
 git add .
-git commit -m "added products app, models and fixtures
+git commit -m "added products app, models and fixtures"
 git push
+
+`python3 manage.py runserver` /admin
+"The first easy fix is to adjust the spelling of 'Categorys'.
+Since it's incorrect here based on django just adding an 's' to the model name."
+
+back in gitpod, products > "models.py"
+"We can fix the spelling issue on the category model by adding a special metaclass to the model itself."
+"this won't require migration since we're not making any
+changes to the structure of the model so this simple addition will fix that issue."
+Update it to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/722adeed7048c1ec88cd3901c140119a51758c17/products/models.py)
+
+products > "admin.py". update it to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/722adeed7048c1ec88cd3901c140119a51758c17/products/admin.py)
+
+git add .
+git commit -m "Customized admin"
+
+products > "views.py" and update it to be:
+```
+from django.shortcuts import render
+from .models import Product
+
+# Create your views here.
+
+def all_products(request):
+    """ A view to show all products, including sorting and search queries """
+
+    products = Product.objects.all()
+
+    context = {
+        'products': products,
+    }
+
+    return render(request, 'products/products.html', context)
+```
+
+in products app, create a file named "urls.py", update it to be:
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.all_products, name='products')
+]
+```
+
+"And this is a good reminder it actually looks like we aren't even using the 
+`from django.contrib import admin` in either of these files.
+So I'm going to remove it from both just to make sure that our code stays clean"
+("urls.py" in boutique-ado project folder too)
+
+go to the boutique-ado project "urls.py", and add:
+`path('products/', include('products.urls')),` to the list there.
