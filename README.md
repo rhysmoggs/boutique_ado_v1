@@ -696,3 +696,26 @@ and "base.css" to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/static/css/base.css)
 update products> "views.py" to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/products/views.py)
+
+git add .
+git commit -m "added sorting and product counts to product page"
+git push
+
+
+cont CATEGORY SORTING. Source selector dropdown box.
+Rewatch Full Stack Frameworks > Project - Boutique Ado > Product Sorting > "Sorting Products Part 3" video.
+
+update "products.html" to be (adds jQuery at bottom):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/products/templates/products/products.html)
+
+in products > "views.py", add `from django.db.models.functions import Lower` to the bottom of the from/imports list at the top of the page.
+
+add 'back to top link button' on products page (adds html and bottom and then js to scrips section):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/products/templates/products/products.html)
+
+and "base.css" to be (btt-button and btt-link classes):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/static/css/base.css)
+
+git add .
+git commit -m ""
+git push
