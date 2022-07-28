@@ -659,3 +659,24 @@ and then filter products based on the category ID instead of the name.
 But this would take more queries and add unnecessary complexity.
 It's faster and easier to just drill into the related model using this double underscore syntax."
 
+update "main-nav.html" to be (just updating the link, similar to what we've done previously)
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/95eb9fc676c29902338d99c5d624b0b5771f0448/templates/includes/main-nav.html)
+
+git add .
+git commit -m "added category filtering"
+git push
+
+
+SORT PRODUCTS BY PRICE, RATING, CATEGORY
+
+"we're gonna finish the main navbar by adding the ability to sort products by price rating and category.
+In main_nav.html let's start in the all products menu by adding some links to the products view.
+with two new get parameters. Sort and direction."
+
+in "main-nav.html", update it to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/673a36fdd4bb2c09f8843c6ad8cb6ae4a60dda01/templates/includes/main-nav.html)
+
+go to poducts > "views.py", update all_products view to be:
+Rewatch Full Stack Frameworks > Project - Boutique Ado > Product Sorting > "Sorting Products Part 1" video.
+
+`python3 manage.py runserver`
