@@ -680,3 +680,19 @@ go to poducts > "views.py", update all_products view to be:
 Rewatch Full Stack Frameworks > Project - Boutique Ado > Product Sorting > "Sorting Products Part 1" video.
 
 `python3 manage.py runserver`
+
+git add .
+git commit -m "added sorting"
+git push
+
+
+cont SORTING, CATEGORY SORTING
+Rewatch Full Stack Frameworks > Project - Boutique Ado > Product Sorting > "Sorting Products Part 2" video.
+update "products.html" to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/products/templates/products/products.html)
+and "product_detail" to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/products/templates/products/product_detail.html)
+and "base.css" to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/static/css/base.css)
+update products> "views.py" to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/ec933ec96eeb42b40e0534e40d40fb38cc999940/products/views.py)
