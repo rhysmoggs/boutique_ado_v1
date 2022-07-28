@@ -556,3 +556,72 @@ git add .
 git commit -m "added product details functionality
 git push
 
+FILTER/Queries and Categories
+
+Search queries:
+in "base.html", on the GET form, add `{% url 'products' %}` to the empty action.
+and in "mobile-top-header.html", on the GET form, add `{% url 'products' %}` to the empty action.
+
+"This change means that when we submit a search query, it'll end up in the url as a get parameter.
+We can access those url parameters in the 'all_products' view by checking whether request.get exists.
+Since we named the text input in the form 'q', We can just check if q is in request.get
+If it is, I'll set it equal to a variable called query.
+If the query is blank it's not going to return any results. So if that's the case let's use
+the Django messages framework to attach an error message to the request.
+And then redirect back to the products url." sooo, to do this,
+
+"We'll also need to import messages, redirect, and reverse up (top of page) in order for that to 
+work and we'll talk more about this later. If the query isn't blank:
+I'm going to use a special object from django.db.models called Q to generate a search query.
+This deserves a bit of an explanation.
+In django if you use something like product.objects.filter,
+In order to filter a list of products, everything will be AND-ed together.
+In the case of our queries that would mean that when a user submits a query,
+in order for it to match the term, it would have to appear in both the product name and the product
+description. Instead, we want to return results where the query was matched in either
+the product name OR the description. In order to accomplish this OR logic, we need to use Q.
+This is worth knowing because in real-world database operations, queries can become quite complex
+and using Q is often the only way to handle them. Because of that, I'd strongly recommend
+that you become familiar with this, and the other complex database functionality, by reading 
+through the queries portion of the Django documentation."
+
+go to products > "views.py" and update the 'all_products' view to be:
+```
+def all_products(request):
+    """ A view to show all products, including sorting and search queries """
+
+    products = Product.objects.all()
+    query = None
+
+    if request.GET:
+        if 'q' in request.GET:
+            query = request.GET['q']
+            if not query:
+                messages.error(request, "You didn't enter any search criteria!")
+                return redirect(reverse('products'))
+            
+            queries = Q(name__icontains=query) | Q(description__icontains=query)
+            products = products.filter(queries)
+
+    context = {
+        'products': products,
+        'search_term': query,
+    }
+
+    return render(request, 'products/products.html', context)
+```
+
+"I'll set a variable ('queries') equal to a Q object, where the name contains the query
+OR the description contains the query. The pipe (|) is what generates the OR statement.
+And the 'i' in front of 'contains' makes the queries case insensitive.
+With those queries constructed, I can now pass them to the filter method in order to actually 
+filter the products. Now I'll add the query to the context. And in the template call it 'search_term',
+and we'll start with it as 'none' at the top of this view to ensure we don't get an error
+when loading the products page without a search term (query = None, at the top of the view)."
+
+or, just copy this (includes imports at top of page):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e59745990a036961e36cc0d469458b5e9b5a80de/products/views.py)
+
+git add .
+git commit -m "added search functionality"
+git push
