@@ -625,3 +625,37 @@ or, just copy this (includes imports at top of page):
 git add .
 git commit -m "added search functionality"
 git push
+
+
+in "main-nav.html", in the 'Clothing' update the a tags to be:
+
+"In order to handle filtering by category, I'm gonna pass a 'category' parameter to the
+products URL just like we're doing with 'q' for search queries.
+These parameters will use the name field from the category model so we have
+a programmatic way to access them.
+Of course we could also use the category id.
+But this makes the URLs a little more semantic which is nice for the user."
+
+"So for the first drop-down menu clothing. This top link here will point to the products URL.
+Followed by a question mark to indicate we're about to pass the category parameter.
+Followed by activewear and essentials separated by a comma.
+This syntax ensures we end up with a comma-separated string in the view."
+
+```
+<a href="{% url 'products' %}?category=activewear,essentials" class="dropdown-item">Activewear &amp; Essentials</a>
+<a href="{% url 'products' %}?category=jeans" class="dropdown-item">Jeans</a>
+<a href="{% url 'products' %}?category=shirts" class="dropdown-item">Shirts</a>
+<a href="{% url 'products' %}?category=activewear,essentials,jeans,shirts" class="dropdown-item">All Clothing</a>
+```
+
+go to products > "views.py" and update the 'all_products' view to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/95eb9fc676c29902338d99c5d624b0b5771f0448/products/views.py)
+
+"It's worth noting by the way, that this double underscore syntax is common when making queries in django.
+Using it here means we're looking for the name field of the category model.
+And we're able to do this because category and product are related with a foreign key.
+An alternative way to do this would be to filter all categories down to those contained in this list
+and then filter products based on the category ID instead of the name.
+But this would take more queries and add unnecessary complexity.
+It's faster and easier to just drill into the related model using this double underscore syntax."
+
