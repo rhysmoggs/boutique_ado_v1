@@ -353,4 +353,26 @@ add the class, just under the .border-black class in the "base.css" file
 ```
 
 git add .
-git commit -m "
+git commit -m "added mobile header and main navbar"
+git push
+
+PRODUCTS PAGE/APP
+"We pruned these from a data set at kaggle.com which is a great provider of
+free sample data for use in all sorts of industries."
+
+copy the following images (download zip) into the media folder:
+(https://github.com/Code-Institute-Solutions/boutique_ado_images/tree/master/pics)
+
+Create the products app, in CLI: `python3 manage.py startapp products`
+then add this products app the the 'INSTALLED_APPS' list in "settings.py" by: `'products',`
+
+"make a folder called fixtures inside the products app"
+`mkdir products/fixtures`
+
+"Fixtures are used to load data very quickly into a django database
+so we don't have to do it all manually in the admin.
+I'm gonna drag and drop a couple of JSON fixture files in here
+one for categories and one for products."
+copy these into the fixtures folder:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/tree/bf096a773ea7e32253e20f58c1d6139317f681be/products/fixtures)
+
