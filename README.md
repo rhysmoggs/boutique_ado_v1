@@ -472,7 +472,39 @@ urlpatterns = [
 "And this is a good reminder it actually looks like we aren't even using the 
 `from django.contrib import admin` in either of these files.
 So I'm going to remove it from both just to make sure that our code stays clean"
-("urls.py" in boutique-ado project folder too)
+("urls.py" in "home" app too)
 
 go to the boutique-ado project "urls.py", and add:
 `path('products/', include('products.urls')),` to the list there.
+
+Create the templates:
+`mkdir -p products/templates/products`
+create "products.html" in that "products" folder, update to be:
+```
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {{ products }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+```
+`python3 manage.py runserver` /products in browser. should display. although messy.
+
+git add .
+git commit -m "added products views and templates"
+git push
+
