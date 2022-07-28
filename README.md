@@ -376,3 +376,49 @@ one for categories and one for products."
 copy these into the fixtures folder:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/tree/bf096a773ea7e32253e20f58c1d6139317f681be/products/fixtures)
 
+copy the content in the products.json file, use a json formatter (https://jsonformatter.org/)
+and paste the code there. it should make it more readable.
+
+"With the fixture files in place and the product app created.
+We need to create some models for the fixtures to go in."
+
+go to products (app) > "models.py" and update to:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/bf096a773ea7e32253e20f58c1d6139317f681be/products/models.py)
+
+`python3 manage.py makemigrations --dry-run`
+
+should error
+`pip3 install Pillow`
+
+It's worth mentioning though that if you're not going to use the plan flag
+you should specify the specific app that you're migrating
+so you don't unintentionally apply migrations from other apps.
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+go to "admin.py" and update to:
+```
+from django.contrib import admin
+from .models import Product, Category
+
+# Register your models here.
+admin.site.register(Product)
+admin.site.register(Category)
+```
+
+"we've got our models created, our fixtures ready to go, our product images uploaded.
+And our migrations applied. The only thing left to do is actually use these fixtures."
+
+"we'll start with categories since the products need to know which category to go in."
+`python3 manage.py loaddata categories`
+`python3 manage.py loaddata products`
+
+"To confirm let's go to the admin and check out a product."
+`python3 manage.py runserver` then /admin in browser. log in > products - all there.
+
+git add .
+git commit -m "added products app, models and fixtures
+git push
