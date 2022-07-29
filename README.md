@@ -705,17 +705,58 @@ git push
 cont CATEGORY SORTING. Source selector dropdown box.
 Rewatch Full Stack Frameworks > Project - Boutique Ado > Product Sorting > "Sorting Products Part 3" video.
 
-update "products.html" to be (adds jQuery at bottom):
+update "products.html" to be (adds js and jQuery at bottom):
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/products/templates/products/products.html)
 
 in products > "views.py", add `from django.db.models.functions import Lower` to the bottom of the from/imports list at the top of the page.
 
-add 'back to top link button' on products page (adds html and bottom and then js to scrips section):
+add 'back to top link button' on products page (adds html and bottom and then jquery to scrips section):
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/products/templates/products/products.html)
 
 and "base.css" to be (btt-button and btt-link classes):
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/656166307e469630d09e0eb17a0d17daa440e208/static/css/base.css)
 
 git add .
-git commit -m ""
+git commit -m "Added sorting js and back to top link"
 git push
+
+
+
+THE SHOPPING BAG
+`python3 manage.py startapp bag`
+add `'bag'` to bottom of 'INSTALLED_BAGS' list in boutique_ado > "settings.py"
+in bag > "views.py", add this view: 
+```
+def view_bag(request):
+    """ A view that renders the bag contents page """
+
+    return render(request, 'bag/bag.html')
+```
+
+`mkdir -p bag/templates/bag`
+
+copy the info in home > "index.html" and paste into the new bag.html, then delete the code within the blockcontent
+create "urls.py" in the bag main folder and add:
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.view_bag, name='view_bag')
+]
+```
+in the project boutique-ado > "urls.py" file, add `path('bag/', include('bag.urls')),` to the list within "urlpatterns"
+
+in templates > "base.html", add `{% url 'view_bag' %}` to the empty href to be :
+`<a class="{% if grand_total %}text-info font-weight-bold{% else %}text-black{% endif %} nav-link" href="{% url 'view_bag' %}">`
+
+in templates > includes > "mobile-top-header.html", add `{% url 'view_bag' %}` to the empty href to be :
+`<a class="{% if grand_total %}text-primary font-weight-bold{% else %}text-black{% endif %} nav-link d-block d-lg-none" href="{% url 'view_bag' %}">`
+
+test it by running it, clicking on shopping bag icon. should work.
+
+
+ADD CONTENT TO THE BAG TEMPLATE:
+in bag > templates> bag > "bag.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/9c2aa64f4edffb25e330d722ee66542e553edb80/bag/templates/bag/bag.html)
+
