@@ -760,3 +760,75 @@ ADD CONTENT TO THE BAG TEMPLATE:
 in bag > templates> bag > "bag.html", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/9c2aa64f4edffb25e330d722ee66542e553edb80/bag/templates/bag/bag.html)
 
+git add .
+git commit -m "added shopping bag app, urls and template"
+
+create "contexts.py" file in the main bag app. update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/9c2aa64f4edffb25e330d722ee66542e553edb80/bag/contexts.py)
+
+update boutique-ado > "settings.py" to have `'bag.contexts.bag_contents',` at the bottom of the list inside the "TEMPLATES", "OPTIONS"
+section (bottom of the list under 'django.contrib...' etc)
+add two variables to the bottom of "settings.py" too:
+```
+FREE_DELIVERY_THRESHOLD = 50
+STANDARD_DELIVERY_PERCENTAGE = 10
+```
+
+templates > "base.html", towards the bottom of the file, make sure that it's "free_delivery_threshold", NOT "free_shipping_threshold":
+`<h4 class="logo-font my-1">Free delivery on orders over ${{ free_delivery_threshold }}!</h4>`.
+
+git add .
+git commit -m "added bag context and delivery logic"
+git push
+
+
+ADDING PRODUCTS
+products > templates > products > "product_detail.html", updaet it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/21e3b111100f5c8daa4bc6e9565bde09980b33d8/products/templates/products/product_detail.html)
+
+static > css > "base.css", just under the .btn-black class, add the following classes:
+```
+.btn-outline-black {
+    background: white;
+    color: black !important; /* use important to override link colors for <a> elements */
+    border: 1px solid black;
+}
+
+.btn-outline-black:hover,
+.btn-outline-black:active,
+.btn-outline-black:focus {
+    background: black;
+    color: white !important;
+}
+```
+
+bag > "views.py", add the "add_to_bag" view:
+```
+def add_to_bag(request, item_id):
+    """ Add a quantity of the specified product to the shopping bag """
+
+    quantity = int(request.POST.get('quantity'))
+    redirect_url = request.POST.get('redirect_url')
+    bag = request.session.get('bag', {})
+
+    if item_id in list(bag.keys()):
+        bag[item_id] += quantity
+    else:
+        bag[item_id] = quantity
+
+    request.session['bag'] = bag
+    print(request.session['bag'])
+    return redirect(redirect_url)
+```
+and add 'redirect' to the list of imports at the top.
+
+bag > "urls.py", add the "add_to_bag" view and add:
+`path('add/<item_id>', views.add_to_bag, name='add_to_bag'),` to the "urlpatterns"
+(add comma at end of both, if not there already)
+
+test it by clicking "add to bag" button on product_detail pages. in CLI, it should
+print out the quantity
+
+git add .
+git commit -m "added add to be bag functionality"
+git push
