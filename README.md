@@ -840,5 +840,41 @@ in bag > "contexts.py", update it to be:
 in bag > templates > bag > "bag.html", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4b28dfe82da5e5e24ed830f15ebe4f70deca8886/bag/templates/bag/bag.html)
 
+git add .
+git commit -m "updated context processor and updated shopping bag template"
+git push
 
 
+products > "models.py", add `has_sizes = models.BooleanField(default=False, null=True, blank=True)` to the Products list,
+in between description and price.
+"Because this is a change to the structure of the model. We'll need to run migrations for this."
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+from video Full Stack Frameworks With Django > Project - Boutique Ado > Adding Products > "Adding Products Part 3"
+"We're gonna dive into a very handy tool for exploring and making changes to the items in our database."
+`python3 manage.py shell`
+in it, in the CLI:
+`from products.models import Product` ENTER
+`kdbb = ['kitchen_dining', 'bed_bath']` ENTER
+`clothes = Product.objects.exclude(category__name__in=kdbb)` ENTER
+`clothes.count()` ENTER
+`for item in clothes:` ENTER
+    `item.has_sizes = True` ENTER
+    `item.save()` ENTER ENTER
+`Product.objects.filter(has_sizes=True)` ENTER
+`Product.objects.filter(has_sizes=True).count()` ENTER
+`exit()` ENTER
+
+products > templates > "product_details.html", update it to (add a dropdown to select product size):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/5e595d250f0d7a408a7ccd40bfa25d24c000034d/products/templates/products/product_detail.html)
+
+`python3 manage.py runserver`
+
+bag > templates > bag > "bag.html", update it to (add size to product info):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/5e595d250f0d7a408a7ccd40bfa25d24c000034d/bag/templates/bag/bag.html)
+
+`python3 manage.py runserver`
