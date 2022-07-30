@@ -947,3 +947,99 @@ git add .
 git commit -m "Added quantity input +/- buttons"
 git push
 
+bag > templates > bag > "bag.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/7e5faf3f2fc5fe20e382f91ea0b86a28b4917359/bag/templates/bag/bag.html)
+
+bag > "contexts.py", in the 'bag_contents' view, in the else statement, change `'quantity': item_data,` to:
+`'quantity': quantity,`
+
+static > css > "base.css", update the ".btt-link" class to be:
+```
+.btt-link,
+.update-link,
+.remove-item {
+    cursor: pointer;
+}
+```
+
+`python3 manage.py runserver`
+git add .
+git commit -m "Added quantity boxes to shopping bag"
+git push
+
+bag > "views.py", add a 'adjust_bag' view:
+```
+def adjust_bag(request, item_id):
+    """ Adjust the quantity of the specified product to the specified amount """
+
+    quantity = int(request.POST.get('quantity'))
+    size = None
+    if 'product_size' in request.POST:
+        size = request.POST['product_size']
+    bag = request.session.get('bag', {})
+
+    if size:
+        if quantity > 0:
+            bag[item_id]['items_by_size'][size] = quantity
+        else:
+            del bag[item_id]['items_by_size'][size]
+    else:
+        if quantity > 0:
+            bag[item_id] = quantity
+        else:
+            bag.pop[item_id]
+
+    request.session['bag'] = bag
+    return redirect(reverse('view_bag'))
+```
+and add 'reverse' to the list of imports at the top.
+
+bag > "urls.py", add: `path('adjust/<item_id>', views.adjust_bag, name='adjust_bag'),`
+
+bag > templates > bag > "bag.html", add: `{% url 'adjust_bag' item.item_id %}` to the empty action in the form around
+~line 52
+
+bag > "views.py", add a 'remove_from_bag' view:
+```
+def remove_from_bag(request, item_id):
+    """ Remove the item from the shopping bag """
+
+    try:
+        size = None
+        if 'product_size' in request.POST:
+            size = request.POST['product_size']
+        bag = request.session.get('bag', {})
+
+        if size:
+            del bag[item_id]['items_by_size'][size]
+            if not bag[item_id]['items_by_size']:
+                bag.pop(item_id)
+        else:
+            bag.pop(item_id)
+
+        request.session['bag'] = bag
+        return HttpResponse(status=200)
+
+    except Exception as e:
+        return HttpResponse(status=500)
+```
+and update the 'adjust_bag' view section, 'if size...' to be:
+```
+if size:
+        if quantity > 0:
+            bag[item_id]['items_by_size'][size] = quantity
+        else:
+            del bag[item_id]['items_by_size'][size]
+            if not bag[item_id]['items_by_size']:
+                bag.pop(item_id)
+```
+and `bag.pop(item_id)` instead of `bag.pop[item_id]` for the "adjust_bag" view.
+add "HttpResponse" to the list of imports at the top
+
+bag > "urls.py", add: `path('remove/<item_id>', views.remove_from_bag, name='remove_from_bag'),`
+
+
+
+bag > templates > bag > "bag.html",  update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/51702653fda1c506bbe7057376a704f220d82c8b/bag/templates/bag/bag.html)
+
