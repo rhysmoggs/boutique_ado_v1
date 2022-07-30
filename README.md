@@ -923,3 +923,27 @@ def add_to_bag(request, item_id):
 
 bag > "contexts.py", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/b44963bb7b88c61ba39e67ef8a311181837e6b89/bag/contexts.py)
+
+bag > templates > bag > "bag.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/b44963bb7b88c61ba39e67ef8a311181837e6b89/bag/templates/bag/bag.html)
+
+git add .
+git commit -m "Finished product size logic"
+git push
+
+from video Full Stack Frameworks With Django > Project - Boutique Ado >  Adding Products > Adding Products Part 5
+(also explains js for buttons, very handy - but also a flaw, which is fixed later)
+
+products > templates > products > "product_detail.html", update it to be (incliudes adding + and - buttons):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/0a5335f2e95f58b10207ea57cedcdd063251a3ff/products/templates/products/product_detail.html)
+
+create "includes" folder in the products > templates > products folder
+"I'm doing this as an HTML file since it'll just be a script element we include at the end of the product detail template
+and this avoids having to deal with additional static files just for a single JavaScript file."
+create "quantity_input_script.html" file within that "includes" folder, then add the following:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/0a5335f2e95f58b10207ea57cedcdd063251a3ff/products/templates/products/includes/quantity_input_script.html)
+
+git add .
+git commit -m "Added quantity input +/- buttons"
+git push
+
