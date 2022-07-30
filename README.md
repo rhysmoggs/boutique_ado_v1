@@ -832,3 +832,13 @@ print out the quantity
 git add .
 git commit -m "added add to be bag functionality"
 git push
+
+remove print statement from bag > "views.py" file
+in bag > "contexts.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4b28dfe82da5e5e24ed830f15ebe4f70deca8886/bag/contexts.py)
+
+in bag > templates > bag > "bag.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4b28dfe82da5e5e24ed830f15ebe4f70deca8886/bag/templates/bag/bag.html)
+
+
+
