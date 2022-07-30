@@ -878,3 +878,48 @@ bag > templates > bag > "bag.html", update it to (add size to product info):
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/5e595d250f0d7a408a7ccd40bfa25d24c000034d/bag/templates/bag/bag.html)
 
 `python3 manage.py runserver`
+
+git add .
+git commit -m "added sizes to product model and size selector to product template"
+git push
+
+update the products that don't require a size from the Special Offers tab on the website (cufflinks, pillow e.g. manually)
+`python3 manage.py runserver` /admin > Products, arrange by name (top of table sorting)
+pp5003270936 - Silver Superman Shield Cufflinks > Has Sizes = No > Save
+pp5003960062 - Home Expressions Microfiber Twin XL Sheet Set > Has Sizes = No > Save
+pp5005850180 - Sunbeam Comfy Toes Microplush Heated Throw > Has Sizes = No > Save
+pp5005940299 - Vieste Green Stone Statement Necklace > Has Sizes = No > Save
+pp5007250126	MaryJane's Home Cotton Clouds Square Decorative Pillow > Has Sizes = No > Save
+
+bag > "views.py", update "add_to_bag" view to be:
+```
+def add_to_bag(request, item_id):
+    """ Add a quantity of the specified product to the shopping bag """
+
+    quantity = int(request.POST.get('quantity'))
+    redirect_url = request.POST.get('redirect_url')
+    size = None
+    if 'product_size' in request.POST:
+        size = request.POST['product_size']
+    bag = request.session.get('bag', {})
+
+    if size:
+        if item_id in list(bag.keys()):
+            if size in bag[item_id]['items_by_size'].keys():
+                bag[item_id]['items_by_size'][size] += quantity
+            else:
+                bag[item_id]['items_by_size'][size] = quantity
+        else:
+            bag[item_id] = {'items_by_size': {size: quantity}}
+    else:
+        if item_id in list(bag.keys()):
+            bag[item_id] += quantity
+        else:
+            bag[item_id] = quantity
+
+    request.session['bag'] = bag
+    return redirect(redirect_url)
+```
+
+bag > "contexts.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/b44963bb7b88c61ba39e67ef8a311181837e6b89/bag/contexts.py)
