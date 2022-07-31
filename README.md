@@ -1123,3 +1123,43 @@ and, inside the "block postloadjs":
 
 go to bag > "views.py" and update to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e5323862cc7563f65526f0108f37c57ad92f7931/bag/views.py)
+
+boutique-ado project > "settings.py", add `MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'`
+just under the 'TEMPLATES' section, and above the 'AUTHENTICATION_BACKENDS'
+
+static > "base.css", add the following, just above the mediaqueries section:
+```
+/* ------------------------------- bootstrap toasts */
+
+.message-container {
+    position: fixed;
+    top: 72px;
+    right: 15px;
+    z-index: 99999999999;
+}
+
+.custom-toast {
+    overflow: visible;
+}
+
+.toast-capper {
+    height: 2px;
+}
+```
+`python3 manage.py runserver`
+try to add a product to the shopping bag, see if a toast/pop-up message appears.
+
+git add .
+git commit -m "Added toasts"
+git push
+
+bag > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/d2c3833acdc59434e38f2ba03b4b5135377f89f4/bag/views.py)
+
+`python3 manage.py runserver`
+should have messages pop up for every action, like add item to bag, remove etc.
+
+static > "base.css", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/d2c3833acdc59434e38f2ba03b4b5135377f89f4/static/css/base.css)
+
+
