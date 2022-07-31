@@ -1162,4 +1162,12 @@ should have messages pop up for every action, like add item to bag, remove etc.
 static > "base.css", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/d2c3833acdc59434e38f2ba03b4b5135377f89f4/static/css/base.css)
 
+templates > includes > toasts > "toast_success.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/d2c3833acdc59434e38f2ba03b4b5135377f89f4/templates/includes/toasts/toast_success.html)
 
+git add .
+git commit -m "Added notification Css, shopping bag preview, and additional messages"
+git push
+
+
+THE CHECKOUT APP
