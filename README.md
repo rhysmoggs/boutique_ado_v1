@@ -823,7 +823,7 @@ def add_to_bag(request, item_id):
 and add 'redirect' to the list of imports at the top.
 
 bag > "urls.py", add the "add_to_bag" view and add:
-`path('add/<item_id>', views.add_to_bag, name='add_to_bag'),` to the "urlpatterns"
+`path('add/<item_id>/', views.add_to_bag, name='add_to_bag'),` to the "urlpatterns"
 (add comma at end of both, if not there already)
 
 test it by clicking "add to bag" button on product_detail pages. in CLI, it should
@@ -994,7 +994,7 @@ def adjust_bag(request, item_id):
 ```
 and add 'reverse' to the list of imports at the top.
 
-bag > "urls.py", add: `path('adjust/<item_id>', views.adjust_bag, name='adjust_bag'),`
+bag > "urls.py", add: `path('adjust/<item_id>/', views.adjust_bag, name='adjust_bag'),`
 
 bag > templates > bag > "bag.html", add: `{% url 'adjust_bag' item.item_id %}` to the empty action in the form around
 ~line 52
@@ -1036,10 +1036,90 @@ if size:
 and `bag.pop(item_id)` instead of `bag.pop[item_id]` for the "adjust_bag" view.
 add "HttpResponse" to the list of imports at the top
 
-bag > "urls.py", add: `path('remove/<item_id>', views.remove_from_bag, name='remove_from_bag'),`
+bag > "urls.py", add: `path('remove/<item_id>/', views.remove_from_bag, name='remove_from_bag'),`
 
 
 
 bag > templates > bag > "bag.html",  update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/51702653fda1c506bbe7057376a704f220d82c8b/bag/templates/bag/bag.html)
 
+templates > "base.html",  add:
+`<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>`
+to the top of the "block corejs" section, underneath the fontawesome but above the rest in there.
+
+"I'll also create an empty file called "`__init__ .py`" which will ensure that this directory is treated as a Python package,
+making our bag tools module available for imports and to use in templates."
+create folder "templatetags" in "bag" app, then create a file named "bag_tools.py" and another file named "`__init__.py`"
+
+in the "bag_tools.py", add:
+```
+from django import template
+
+
+register = template.Library()
+
+@register.filter(name='calc_subtotal')
+def calc_subtotal(price, quantity):
+    return price * quantity
+```
+
+git add .
+git commit -m "added adjust bag and remove from bag views, and calc subtotal template filter"
+git push
+
+
+TOASTS
+create a folder named "toasts" inside templates > includes folder, then a file within it named "toast_success.html"
+add the following to "toast_success.html":
+```
+<div class="toast custom-toast rounded-0 border-top-0" data-autohide="false">
+    <div class="arrow-up arrow-success"></div>
+    <div class="w-100 toast-capper bg-success"></div>
+    <div class="toast-header bg-white text-dark">
+        <strong class="mr-auto">Success!</strong>
+        <button type="button" class="ml-2 mb-1 close text-dark" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body bg-white">
+        {{ message }}        
+    </div>
+</div>
+```
+
+create "toast_error.html" in the same location and paste the same code into that, but change the class
+"arrow-success" to "arrow-danger", "bg-success" to "bg-danger" and the strong "Success!" to "Error!"
+
+create "toast_info.html" in the same location and paste the same code into that, but change the class
+"arrow-success" to "arrow-info", "bg-success" to "bg-info" and the strong "Success!" to "Alert!"
+
+create "toast_warning.html" in the same location and paste the same code into that, but change the class
+"arrow-success" to "arrow-warning", "bg-success" to "bg-warning" and the strong "Success!" to "Warning!"
+
+templates > "base.html" file, update the message-container div at the bottom to be:
+```
+<div class="message-container">
+    {% for message in messages %}
+        {% with message.level as level %}
+            {% if level == 40 %}
+                {% include 'includes/toasts/toast_error.html' %}
+            {% elif level == 30 %}
+                {% include 'includes/toasts/toast_warning.html' %}
+            {% elif level == 25 %}
+                {% include 'includes/toasts/toast_success.html' %}
+            {% else %}
+                {% include 'includes/toasts/toast_info.html' %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+</div>
+```
+and, inside the "block postloadjs":
+```
+<script type="text/javascript">
+    $('.toast').toast('show');
+</script>
+```
+
+go to bag > "views.py" and update to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e5323862cc7563f65526f0108f37c57ad92f7931/bag/views.py)
