@@ -1220,3 +1220,172 @@ admin.site.register(Order, OrderAdmin)
 ```
 
 `python3 manage.py runserver` /admin
+
+admin homepage > Orders > Add Order button > you've got control over stuff here.
+
+SIGNALS (built-in django feature)
+
+create new file named "signals.py" in the checkout app folder and add:
+```
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
+from .models import OrderLineItem
+
+@receiver(post_save, sender=OrderLineItem)
+def update_on_save(sender, instance, created, **kwargs):
+    """
+    Update order total on lineitem update/create
+    """
+    instance.order.update_total()
+
+@receiver(post_delete, sender=OrderLineItem)
+def update_on_save(sender, instance, **kwargs):
+    """
+    Update order total on lineitem delete
+    """
+    instance.order.update_total()
+```
+
+checkout > "apps.py", update it to be:
+```
+from django.apps import AppConfig
+
+
+class CheckoutConfig(AppConfig):
+    name = 'checkout'
+
+    def ready(self):
+        import checkout.signals
+```
+
+in checkout app, create file "forms.py", add:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/eee6f2bc60385e58ab27b0732fba3e6a22a2c209/checkout/forms.py)
+
+git add .
+git commit -m "Added forms, admin and signals"
+git push
+
+checkout > "views.py", update it to be:
+```
+from django.shortcuts import render, redirect, reverse
+from django.contrib import messages
+
+from .forms import OrderForm
+
+
+def checkout(request):
+    bag = request.session.get('bag', {})
+    if not bag:
+        messages.error(request, "There's nothing in your bag at the moment")
+        return redirect(reverse('products'))
+
+    order_form = OrderForm()
+    template = 'checkout/checkout.html'
+    context = {
+        'order_form': order_form,
+    }
+
+    return render(request, template, context)
+```
+
+create a new "urls.py" file in the checkout app. add:
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.checkout, name='checkout')
+]
+```
+boutique-ado > "urls.py", add `path('checkout/', include('checkout.urls')),` to the 'urlpatterns'.
+
+create new folder "templates" in checkout app, then "checkout" folder within that, then "checkout.html" within that
+add the following to it:
+```
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}">
+{% endblock %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2 class="logo-font mb-4">Shopping Bag</h2>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <p class="text-muted">Please fill out the form below to complete your order</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+```
+
+create a new folder named "static" within the checkout app, a "checkout" folder within the newly created "static"
+folder, then a "css" folder within that and finally a file named "checkout.css".
+
+"Now that the basics of the template are done, we'll need to install a new package called django-crispy-forms
+which will let us format all our forms using bootstrap styling automatically."
+
+CLI: `pip3 install django-crispy-forms`
+
+boutique_ado > "settings.py", under 'INSTALLED_APPS', add the following to the list:
+```
+    # Other
+    'crispy_forms',
+```
+and between 'ROOT_URLCONF' and 'TEMPLATES', add: `CRISPY_TEMPLATE_PACK = 'bootstrap4'`
+and update 'TEMPLATES' to be:
+```
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request', # required by allauth, do not delete
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+                'bag.contexts.bag_contents',
+            ],
+            'builtins': [
+                'crispy_forms.templatetags.crispy_forms_tags',
+                'crispy_forms.templatetags.crispy_forms_field',
+            ]
+        },
+    },
+]
+```
+`pip3 freeze > requirements.txt`
+
+checkout > templates > checkout > "checkout.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/8486523459273dddf96932a4ae19dd9a83af679d/checkout/templates/checkout/checkout.html)
+
+
+bag > templates > bag > "bag.html", add `{% url 'checkout' %}` to the "Secure Checkout" section,
+within the empty href tag, underneath "Keep Shopping"
+
+python3 manage.py runserver
