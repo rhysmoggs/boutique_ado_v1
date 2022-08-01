@@ -1389,3 +1389,56 @@ bag > templates > bag > "bag.html", add `{% url 'checkout' %}` to the "Secure Ch
 within the empty href tag, underneath "Keep Shopping"
 
 python3 manage.py runserver
+
+git add .
+git commit -m "Added checkout views and templates"
+git push
+
+
+STRIPE - create an account at (https://stripe.com/).
+once logged in, copy the test API key/Seceet key info.
+
+follow the guide for setting up Stripe Elements (https://stripe.com/docs/payments/quickstart), but as of right now,
+you just need to add:
+```
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+```
+to the bottom of the 'corejs block' in the templates > "base.html" file.
+
+checkout > templates > checkout > "checkout.html" add the following to the bottom:
+```
+{% block postloadjs %}
+    {{ block.super }}
+    {{ stripe_public_key|json_script:"id_stripe_public_key" }}
+    {{ client_secret|json_script:"id_client_secret" }}
+    <script src="{% static 'checkout/js/stripe_elements.js' %}"></script>
+{% endblock %}
+```
+
+go to checkout > "views.py" and update the checkout view to be:
+```
+def checkout(request):
+    bag = request.session.get('bag', {})
+    if not bag:
+        messages.error(request, "There's nothing in your bag at the moment")
+        return redirect(reverse('products'))
+
+    order_form = OrderForm()
+    template = 'checkout/checkout.html'
+    context = {
+        'order_form': order_form,
+        'stripe_public_key': 'pk_test_0SMREd7Vdweb1MGRi8S0EycR00JVzSAs5O',
+        'client_secret': 'test client secret',
+    }
+
+    return render(request, template, context)
+```
+create a "js" folder in checkout > static > checkout. Then "stripe_elements.js" file within it. fill it with:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/a75791ce63bfce9a05f614d7712199c893063ed9/checkout/static/checkout/js/stripe_elements.js)
+
+checkout > static > checkout > css > "checkout.css", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/a75791ce63bfce9a05f614d7712199c893063ed9/checkout/static/checkout/css/checkout.css)
+
+
+
