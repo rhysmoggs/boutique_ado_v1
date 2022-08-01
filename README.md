@@ -1171,3 +1171,52 @@ git push
 
 
 THE CHECKOUT APP
+`python3 manage.py startapp checkout`
+boutique_ado > "settings.py", add `'checkout',` to the bottom of the list of "INSTALLED_APPS"
+checkoout > "models.py", update it ot be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/faaa31bcbd1bcc5fdf7d54c57d51c031df9d7460/checkout/models.py)
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+git add .
+git commit -m "Created checkout app and modules"
+git push
+
+checkoout > "admin.py", update it ot be:
+```
+from django.contrib import admin
+from .models import Order, OrderLineItem
+
+
+class OrderLineItemAdminInline(admin.TabularInline):
+    model = OrderLineItem
+    readonly_fields = ('lineitem_total',)
+
+
+class OrderAdmin(admin.ModelAdmin):
+    inlines = (OrderLineItemAdminInline,)
+
+    readonly_fields = ('order_number', 'date',
+                       'delivery_cost', 'order_total',
+                       'grand_total',)
+
+    fields = ('order_number', 'date', 'full_name',
+              'email', 'phone_number', 'country',
+              'postcode', 'town_or_city', 'street_address1',
+              'street_address2', 'county', 'delivery_cost',
+              'order_total', 'grand_total',)
+
+    list_display = ('order_number', 'date', 'full_name',
+                    'order_total', 'delivery_cost',
+                    'grand_total',)
+
+    ordering = ('-date',)
+
+
+admin.site.register(Order, OrderAdmin)
+```
+
+`python3 manage.py runserver` /admin
