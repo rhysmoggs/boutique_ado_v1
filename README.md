@@ -1542,3 +1542,70 @@ urlpatterns = [
 ]
 ```
 
+create "checkout_success.html" in the checkout > templates > checkout folder, and add:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5ff37a673daa3b9e04fbfade263316198fd96c9/checkout/templates/checkout/checkout_success.html)
+
+in checkout > "`__init__.py`" add: `default_app_config = 'checkout.apps.CheckoutConfig'`
+
+checkout > "models.py", add ` or 0` to the end of:
+`self.order_total = self.lineitems.aggregate(Sum('lineitem_total'))['lineitem_total__sum']`. check here:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5ff37a673daa3b9e04fbfade263316198fd96c9/checkout/models.py)
+
+checkout > "signals.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5ff37a673daa3b9e04fbfade263316198fd96c9/checkout/signals.py)
+
+git add .
+git commit -m "Added checkout success logic"
+git push
+
+checkout > templates > checkout > "checkout_success.html":
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4f4a39d898c2c347e0d0a0201e4c0d2d6ef1c500/checkout/templates/checkout/checkout_success.html)
+then make sure ~line65:
+`{{ item.product.name }}{% if item.product_size %} - Size {{ item.product.size|upper }}{% endif %}`
+is updated to be:
+`{{ item.product.name }}{% if item.product_size %} - Size {{ item.product_size|upper }}{% endif %}`
+and ~line104:
+`<p class="mb-0">{{ order.street_address1 }}</p>`
+to be:
+`<p class="mb-0">{{ order.street_address2 }}</p>`
+
+run app. test, order, checkout. should list an order confirmation.
+
+git add .
+git commit -m "Added order summary to checkout success page"
+git push
+
+checkout > templates > checkout > "checkout.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4f4a39d898c2c347e0d0a0201e4c0d2d6ef1c500/checkout/templates/checkout/checkout.html)
+checkout > static > checkout > css > "checkout.css", add the following to the bottom:
+```
+#loading-overlay {
+	display: none;
+	position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(23, 162, 184, .85);
+    z-index: 9999;
+}
+
+.loading-spinner {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    height: 100%;
+}
+```
+checkout > static > checkout > js > "stripe_elements.js", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/4f4a39d898c2c347e0d0a0201e4c0d2d6ef1c500/checkout/static/checkout/js/stripe_elements.js)
+
+test again, go to checkout and use stripes extra authentication card no:
+"4000002500003155", should load up the popup with loading animation and overlay
+
+git add .
+git commit -m "Added loading overlay"
+git push
+
+
