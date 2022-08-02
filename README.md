@@ -1608,4 +1608,88 @@ git add .
 git commit -m "Added loading overlay"
 git push
 
+create file "webhook_handler.py" in checkout folder, then add this to it:
+```
+from django.http import HttpResponse
+
+
+class StripeWH_Handler:
+    """Handle Stripe webhooks"""
+
+    def __init__(self, request):
+        self.request = request
+
+    def handle_event(self, event):
+        """
+        Handle a generic/unknown/unexpected webhook event
+        """
+        return HttpResponse(
+            content=f'Webhook received: {event["type"]}',
+            status=200)
+```
+
+git add .
+git commit -m "Added webhook handler"
+git push
+
+checkout > "webhook_handler.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/cdf3e76a67d03b6ed0e59d903869f04a0e1c4bb5/checkout/webhook_handler.py)
+
+checkout > "urls.py", update it to be:
+```
+from django.urls import path
+from . import views
+from .webhooks import webhook
+
+urlpatterns = [
+    path('', views.checkout, name='checkout'),
+    path('checkout_success/<order_number>', views.checkout_success, name='checkout_success'),
+    path('wh/', webhook, name='webhook'),
+]
+```
+
+create "webhooks.py" file in checkout folder, update it to be:
+```
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+
+from checkout.webhook_handler import StripeWH_Handler
+
+import stripe
+
+@require_POST
+@csrf_exempt
+def webhook(request):
+    """Listen for webhooks from Stripe"""
+    # Setup
+    wh_secret = settings.STRIPE_WH_SECRET
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    # Get the webhook data and verify its signature
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, wh_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+    except Exception as e:
+        return HttpResponse(content=e, status=400)
+
+    print('Success!')
+    return HttpResponse(status=200)
+```
+
+go to boutique_ado > "settings.py":
+add `STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')` to the bottom of the list of Stripe environment variables.
+
 
