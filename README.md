@@ -1519,34 +1519,26 @@ checkout > "views.py", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/6b3837fb56fdb60655292badbb2dcf649a074ec7/checkout/views.py)
 
 checkout > static > checkout > js > "stripe_elements.js", update it to be:
-```
-// Handle form submit
-var form = document.getElementById('payment-form');
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/6b3837fb56fdb60655292badbb2dcf649a074ec7/checkout/static/checkout/js/stripe_elements.js)
 
-form.addEventListener('submit', function(ev) {
-    ev.preventDefault();
-    card.update({ 'disabled': true});
-    $('#submit-button').attr('disabled', true);
-    stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-            card: card,
-        }
-    }).then(function(result) {
-        if (result.error) {
-            var errorDiv = document.getElementById('card-errors');
-            var html = `
-                <span class="icon" role="alert">
-                <i class="fas fa-times"></i>
-                </span>
-                <span>${result.error.message}</span>`;
-            $(errorDiv).html(html);
-            card.update({ 'disabled': false});
-            $('#submit-button').attr('disabled', false);
-        } else {
-            if (result.paymentIntent.status === 'succeeded') {
-                form.submit();
-            }
-        }
-    });
-});
+python3 manage.py runserver
+
+go to checkout, fill in form with fake details and "4242...etc" for the card detail.
+go to Stripe's website. click on "Developers" at top right, "Events" on left menu, then it'll show the list
+of events. Should have succeeeded there.
+
+git add .
+git commit -m "Added basic checkout functionality"
+git push
+
+checkout > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5ff37a673daa3b9e04fbfade263316198fd96c9/checkout/views.py)
+
+checkout > "urls.py", update "urlpatterns" to be:
 ```
+urlpatterns = [
+    path('', views.checkout, name='checkout'),
+    path('checkout_success/<order_number>', views.checkout_success, name='checkout_success'),
+]
+```
+
