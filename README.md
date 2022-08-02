@@ -1440,5 +1440,113 @@ create a "js" folder in checkout > static > checkout. Then "stripe_elements.js" 
 checkout > static > checkout > css > "checkout.css", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/a75791ce63bfce9a05f614d7712199c893063ed9/checkout/static/checkout/css/checkout.css)
 
+git add .
+git commit -m "Added stripe elements"
+git push
 
 
+checkout > static > checkout > js > "stripe_elements.js", add this to the bottom of the current code:
+```
+// Handle realtime validation errors on the card element
+card.addEventListener('change', function (event) {
+    var errorDiv = document.getElementById('card-errors');
+    if (event.error) {
+        var html = `
+            <span class="icon" role="alert">
+                <i class="fas fa-times"></i>
+            </span>
+            <span>${event.error.message}</span>
+        `;
+        $(errorDiv).html(html);
+    } else {
+        errorDiv.textContent = '';
+    }
+});
+```
+
+checkout > "views.py", add `from bag.contexts import bag_contents`, under `from .forms import OrderForm`
+and:
+```
+    current_bag = bag_contents(request)
+    total = current_bag['grand_total']
+    stripe_total = round(total * 100)
+```
+underneath the 'if not' statement, and above the order_form, to emulate this (but dont copy+paste yet)
+
+`pip3 install stripe`
+checkout > "views.py", update the imports at the top to now be:
+```
+from django.shortcuts import render, redirect, reverse
+from django.contrib import messages
+from django.conf import settings
+
+from .forms import OrderForm
+from bag.contexts import bag_contents
+
+import stripe
+```
+
+boutique_ado > "settings.py", towards the bottom, add: `# Stripe` as the comment on top of 
+```
+FREE_DELIVERY_THRESHOLD = 50
+STANDARD_DELIVERY_PERCENTAGE = 10
+```
+then add these underneath to that 'Stripe' list
+```
+STRIPE_CURRENCY = 'usd'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+```
+
+CLI: `export STRIPE_PUBLIC_KEY=<public key from stripe website>`
+CLI: `export STRIPE_SECRET_KEY=<secret key from stripe website>`
+
+"If you are not using gitpod you may need to look up instructions on setting environment variables
+for your specific situation. Additionally, this will not be permanent. And you'll have to re-export them 
+each time you start your workspace. If you're using gitpod you can make them permanent by going to your 
+main workspaces page (gitpod page), clicking your account icon in the upper right corner. And going to settings
+And entering them there under the 'Variables' section."
+
+name: STRIPE_PUBLIC_KEY
+value: public key from stripe website 
+scope: specific project or all projects
+
+name: STRIPE_SECRET_KEY
+value: secret key from stripe website 
+scope: specific project or all projects
+
+checkout > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/6b3837fb56fdb60655292badbb2dcf649a074ec7/checkout/views.py)
+
+checkout > static > checkout > js > "stripe_elements.js", update it to be:
+```
+// Handle form submit
+var form = document.getElementById('payment-form');
+
+form.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    card.update({ 'disabled': true});
+    $('#submit-button').attr('disabled', true);
+    stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+            card: card,
+        }
+    }).then(function(result) {
+        if (result.error) {
+            var errorDiv = document.getElementById('card-errors');
+            var html = `
+                <span class="icon" role="alert">
+                <i class="fas fa-times"></i>
+                </span>
+                <span>${result.error.message}</span>`;
+            $(errorDiv).html(html);
+            card.update({ 'disabled': false});
+            $('#submit-button').attr('disabled', false);
+        } else {
+            if (result.paymentIntent.status === 'succeeded') {
+                form.submit();
+            }
+        }
+    });
+});
+```
