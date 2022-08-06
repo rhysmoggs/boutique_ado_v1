@@ -1697,6 +1697,8 @@ add `STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')` to the bottom of the 
 copy the website url from the address bar
 go to Stripe's website > Developers (top-right) > Webhooks (left menu) > Add an Endpoint button.
 "Endpoint URL": paste_your_website_address_here/checkout/wh/
+PREVIOUS ERROR, ALTHOUGH THE WEB ADDRESS/URL WAS CORRECT, IT WAS DIFFERENT WHEN COMPARING WH AND SERVER ADDRESS AT A LATER POINT.
+ALSO, MAKE SURE THE GITPOD WORKSPACE IS SHARED (BOTTOM, WHEN SHARING E.G. FOR OTHERS TO LOOK AT YOUR GITPOD)
 Select events then tick the box for Select all events, then Add events button. Add entpoint button.
 "Reveal" the 'Signing secret', and copy it.
 
@@ -1846,5 +1848,157 @@ def handle_payment_intent_succeeded(self, event):
  ```
 
  `python3 manage.py runserver`
+order, checkout and go through all that process.
+in Stripe, go to Developers > Webhooks, click on "payment_intent.succeed" and should list the info there??
 
- webhandler issues, not printing the data? error in stripe or okay??
+git add .
+git commit -m "Added checkout form data caching in payment intent"
+git push
+
+checkout > "webhook_handler.py", update 'handle_payment_intent_succeeded' to be:
+```
+def handle_payment_intent_succeeded(self, event):
+        """
+        Handle the payment_intent.succeeded webhook from Stripe
+        """
+        intent = event.data.object
+        pid = intent.id
+        bag = intent.metadata.bag
+        save_info = intent.metadata.save_info
+
+        billing_details = intent.charges.data[0].billing_details
+        shipping_details = intent.shipping
+        grand_total = round(intent.charges.data[0].amount / 100, 2)
+
+        # Clean data in the shipping details
+        for field, value in shipping_details.address.items():
+            if value == "":
+                shipping_details.address[field] = None
+
+        order_exists = False
+        attempt = 1
+        while attempt <= 5:
+            try:
+                order = Order.objects.get(
+                    full_name__iexact=shipping_details.name,
+                    email__iexact=billing_details.email,
+                    phone_number__iexact=shipping_details.phone,
+                    country__iexact=shipping_details.address.country,
+                    postcode__iexact=shipping_details.address.postal_code,
+                    town_or_city__iexact=shipping_details.address.city,
+                    street_address1__iexact=shipping_details.address.line1,
+                    street_address2__iexact=shipping_details.address.line2,
+                    county__iexact=shipping_details.address.state,
+                    grand_total=grand_total,
+                    original_bag=bag,
+                    stripe_pid=pid,
+                )
+                order_exists = True
+                break
+            except Order.DoesNotExist:
+                attempt += 1
+                time.sleep(1)
+        if order_exists:
+            return HttpResponse(
+                content=f'Webhook received: {event["type"]} | SUCCESS: Verified order already in database',
+                status=200)
+        else:
+            order = None
+            try:
+                order = Order.objects.create(
+                    full_name=shipping_details.name,
+                    email=billing_details.email,
+                    phone_number=shipping_details.phone,
+                    country=shipping_details.address.country,
+                    postcode=shipping_details.address.postal_code,
+                    town_or_city=shipping_details.address.city,
+                    street_address1=shipping_details.address.line1,
+                    street_address2=shipping_details.address.line2,
+                    county=shipping_details.address.state,
+                    original_bag=bag,
+                    stripe_pid=pid,
+                )
+                for item_id, item_data in json.loads(bag).items():
+                    product = Product.objects.get(id=item_id)
+                    if isinstance(item_data, int):
+                        order_line_item = OrderLineItem(
+                            order=order,
+                            product=product,
+                            quantity=item_data,
+                        )
+                        order_line_item.save()
+                    else:
+                        for size, quantity in item_data['items_by_size'].items():
+                            order_line_item = OrderLineItem(
+                                order=order,
+                                product=product,
+                                quantity=quantity,
+                                product_size=size,
+                            )
+                            order_line_item.save()
+            except Exception as e:
+                if order:
+                    order.delete()
+                return HttpResponse(
+                    content=f'Webhook received: {event["type"]} | ERROR: {e}',
+                    status=500)
+        return HttpResponse(
+            content=f'Webhook received: {event["type"]} | SUCCESS: Created order in webhook',
+            status=200)
+```
+
+checkout > "models.py", add the following two fields to the Order model:
+```
+original_bag = models.TextField(null=False, blank=False, default='')
+stripe_pid = models.CharField(max_length=254, null=False, blank=False, default='')
+```
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+checkout > "admin.py", add `'original_bag', 'stripe_pid'` to the "readonly_fields" and the "fields" area.
+
+checkout > templates > checkout > "checkout.html", update the fieldset ~line104 to be:
+```
+<fieldset class="px-3">
+    <legend class="fieldset-label small text-black px-2 w-auto">Payment</legend>
+    <!-- A Stripe card element will go here -->
+    <div class="mb-3" id="card-element"></div>
+    <!-- Used to display form errors -->
+    <div class="mb-3 text-danger" id="card-errors" role="alert"></div>
+    <!-- Pass the client secret to the view so we can get the payment intent id -->
+    <input type="hidden" value="{{ client_secret }}" name="client_secret">
+</fieldset>
+```
+
+checkout > "views.py", update from ~line51 to line55
+```
+order = order_form.save(commit=False)
+pid = request.POST.get('client_secret').split('_secret')[0]
+order.stripe_pid = pid
+order.original_bag = json.dumps(bag)
+order.save()
+```
+check link below for reference only, don't copy and paste. just make the above the same:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/b5e178737596a1a1cf5be50345dc770b119918fd/checkout/views.py)
+
+checkout > "webhook_handler.py", make sure:
+```
+original_bag=bag,
+stripe_pid=pid,
+```
+are present on the bottom of the lists.
+also, add these to the top:
+```
+from .models import Order, OrderLineItem
+from products.models import Product
+
+import stripe
+import json
+```
+
+`python3 manage.py runserver`, test by going through checkout, using 4242...etc for card payment
+check Stripe website > Developers > Webhooks > should Succeed there.
+
