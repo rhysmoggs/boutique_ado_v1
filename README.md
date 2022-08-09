@@ -2071,3 +2071,95 @@ self.fields['full_name'].widget.attrs['autofocus'] = True
 git add .
 git commit -m "Updated checkout form"
 git push
+
+
+Profile App
+
+`python3 manage.py startapp profiles`
+
+boutique_ado > "settings.py", add `'profiles',` under `'checkout',` in the list of
+"INSTALLED_APPS"
+
+profiles > "models.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/95864bc75ef940aa002976163d7885612c6ca04b/profiles/models.py)
+"And then creating a user profile model which has a one-to-one field attached to the user.
+This is just like a foreign key except that it specifies that each user can only have one profile.
+And each profile can only be attached to one user."
+
+checkout > "models.py", add `from profiles.models import UserProfile` under `from products.models import Product`
+then, add the following to the "Order" class/model, under the currently first "order_number" and above "full_name":
+```
+user_profile = models.ForeignKey(UserProfile, on_delete=models.SET_NULL,
+                                     null=True, blank=True, related_name='orders')
+```
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+profiles > "views.py", update it to be:
+```
+from django.shortcuts import render
+
+
+def profile(request):
+    """ Display the user's profile. """
+
+    template = 'profiles/profile.html'
+    context = {}
+
+    return render(request, template, context)
+```
+
+
+in profiles, create a file named "urls.py". update it to be:
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.profile, name='profile')
+]
+```
+
+boutique_ado > "urls.py", add `path('profile/', include('profiles.urls')),`
+to the list, under "path('checkout/', include('checkout.urls')),"
+
+in profiles app, create a file and name it "templates/profiles/profile.html". add:
+```
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'profiles/css/profile.css' %}">
+{% endblock %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2 class="logo-font mb-4">My Profile</h2>
+                <hr>
+            </div>
+        </div>
+{% endblock %}
+```
+
+in profiles app, create a file and name it "static/profiles/css/profile.css". add:
+
+`python3 manage.py runserver` and add /profile to address. Should load the basic profile page.
+
+git add .
+git commit -m "Add profile app"
+git push
