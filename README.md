@@ -2002,3 +2002,72 @@ import json
 `python3 manage.py runserver`, test by going through checkout, using 4242...etc for card payment
 check Stripe website > Developers > Webhooks > should Succeed there.
 
+git add .
+git commit -m "Completed webhook handler"
+git push
+
+checkout > templates > checkout > "checkout.html", swap the order of the delivery section to be:
+```
+                        {{ order_form.phone_number | as_crispy_field }}
+                        {{ order_form.street_address1 | as_crispy_field }}
+                        {{ order_form.street_address2 | as_crispy_field }}
+                        {{ order_form.town_or_city | as_crispy_field }}
+                        {{ order_form.county | as_crispy_field }}
+                        {{ order_form.postcode | as_crispy_field }}
+                        {{ order_form.country | as_crispy_field }}
+```
+checkout > "forms.py", update (in "placeholders") `'county': 'County',` to be `'county': 'County, State or Locality',`
+
+
+"Please ensure you download the correct version of django-countries to follow this video.
+Installing without a version specified, will install the latest version which is incompatible with
+Python 3.8.12 (used by Gitpod).To ensure you can follow along without errors, please use the command
+`pip3 install django-countries==7.2.1` when installing django-countries, instead of the command 
+in the video (pip3 install django-countries). This is the latest stable version of the django-countries 
+package."
+
+`pip3 install django-countries==7.2.1`
+`pip3 freeze > requirements.txt`
+
+checkout > "models.py", add `from django_countries.fields import CountryField` to the top, between django.conf
+and products.models, then updated the class Order `country = models.CharField(max_length=40, null=False, blank=False)`
+to be `country = CountryField(blank_label='Country *', null=False, blank=False)` instead.
+
+`python3 manage.py makemigrations --dry-run`
+`python3 manage.py makemigrations`
+`python3 manage.py migrate --plan`
+`python3 manage.py migrate`
+
+`python3 manage.py runserver`
+
+checkout > static > checkout > css > "checkout.css", on top of the "#loading-overlay" class, add:
+```
+select,
+select option {
+    color: #000000;
+}
+
+select:invalid,
+select option[value=""] {
+    color: #aab7c4 !important;
+}
+```
+
+checkout > "forms.py", remove `'country': 'Country',` from the placeholders dictionary, and update
+the bottom section to be:
+```
+self.fields['full_name'].widget.attrs['autofocus'] = True
+        for field in self.fields:
+            if field != 'country':
+                if self.fields[field].required:
+                    placeholder = f'{placeholders[field]} *'
+                else:
+                    placeholder = placeholders[field]
+                self.fields[field].widget.attrs['placeholder'] = placeholder
+            self.fields[field].widget.attrs['class'] = 'stripe-style-input'
+            self.fields[field].label = False
+```
+
+git add .
+git commit -m "Updated checkout form"
+git push
