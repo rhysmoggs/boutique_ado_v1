@@ -2520,6 +2520,57 @@ checkout > "webhook_handler.py", update it to be:
 
 to test this, go to:
 checkout > static > checkout > js > "stripe_elements.js" and comment out ~line110 `form.save()`, comment it out.
+run server, try to order and go through checkout. it should fail to load the screen but still submit the form/order.
+check in /admin for that order, and it should also be displayed on My Profie, Order History.
+checkout > static > checkout > js > "stripe_elements.js" and re-enable ~line110 `form.save()` so it's back to being active.
 
+git add .
+git commit -m "Updated webbook handler to handle profiles"
+git push
+
+
+Finalize payment system, by sending confirmation email
+
+checkout > templates > checkout, create a folder named "confirmation_emails"
+in "confirmation_emails" folder, create two files named "confirmation_email_subject.txt" and "confirmation_email_body.txt"
+
+in "confirmation_email_subject.txt", add: `Boutique Ado Confirmation for Order Number {{ order.order_number }}`
+in "confirmation_email_body.txt", add:
+```
+Hello {{ order.full_name }}!
+
+This is a confirmation of your order at Boutique Ado. Your order information is below:
+
+Order Number: {{ order.order_number }}
+Order Date: {{ order.date }}
+
+Order Total: ${{ order.order_total }}
+Delivery: ${{ order.delivery_cost }}
+Grand Total: ${{ order.grand_total }}
+
+Your order will be shipped to {{ order.street_address1 }} in {{ order.town_or_city }}, {{ order.country }}.
+
+We've got your phone number on file as {{ order.phone_number }}.
+
+If you have any questions, feel free to contact us at {{ contact_email }}.
+
+Thank you for your order!
+
+Sincerely,
+
+Boutique Ado
+```
+
+checkout > "webhook_handler.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f6c3de32aa152b98da174daba13412388258b9b8/checkout/webhook_handler.py)
+
+boutique_ado > "settings.py", to the "Stripe" section, add the following:
+`DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'`
+
+test by running the website, placing an order. The test email should be back in gitpods terminal/console.
+
+git add .
+git commit -m "Completed confirmation emails"
+git push
 
 
