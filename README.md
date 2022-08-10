@@ -2307,3 +2307,132 @@ go to My Account > My Profile on website. should display username there.
 git add .
 git commit -m "Updated allauth templates and tested profiles"
 git push
+
+
+Build user profile form.
+
+create "forms.py" file in profiles app, then add:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/149abda4318106704ac8d3118b8e5a63ef070619/profiles/forms.py)
+
+profiles > "views.py". update it to be:
+```
+from django.shortcuts import render, get_object_or_404
+
+from .models import UserProfile
+from .forms import UserProfileForm
+
+
+def profile(request):
+    """ Display the user's profile. """
+    profile = get_object_or_404(UserProfile, user=request.user)
+
+    form = UserProfileForm(instance=profile)
+    orders = profile.orders.all()
+
+    template = 'profiles/profile.html'
+    context = {
+        'form': form,
+        'orders': orders,
+    }
+
+    return render(request, template, context)
+```
+
+then, profiles > templates > profiles > "profile.html", update the "block content" at the bottom to be:
+```
+{% block content %}
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2 class="logo-font mb-4">My Profile</h2>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <p class="text-muted">Default Delivery Information</p>
+                <form class="mt-3" action="{% url 'profile' %}" method="POST" id="profile-update-form">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-black rounded-0 text-uppercase float-right">Update Information</button>
+                </form>
+            </div>
+            <div class="col-12 col-lg-6">
+                <p class="text-muted">Order History</p>
+                {{ orders }}
+            </div>
+        </div>
+{% endblock %}
+```
+
+`python3 manage.py runserver`, check the profile. some adjustments to be made.
+
+profiles > "models.py", update the section to be (rearraged order and delete asterics from Country):
+```
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    default_phone_number = models.CharField(max_length=20, null=True, blank=True)
+    default_street_address1 = models.CharField(max_length=80, null=True, blank=True)
+    default_street_address2 = models.CharField(max_length=80, null=True, blank=True)
+    default_town_or_city = models.CharField(max_length=40, null=True, blank=True)
+    default_county = models.CharField(max_length=80, null=True, blank=True)
+    default_postcode = models.CharField(max_length=20, null=True, blank=True)
+    default_country = CountryField(blank_label='Country', null=True, blank=True)
+```
+
+profiles > static > profiles > css > "profile.css" and add:
+```
+#profile-update-form .form-control {
+    color: #000;
+}
+
+#profile-update-form input::placeholder {
+    color: #aab7c4;
+}
+
+#id_default_country,
+#id_default_country option:not(:first-child) {
+    color: #000;
+}
+
+#id_default_country option:first-child {
+    color: #aab7c4;
+}
+```
+
+profiles > templates > profiles > "profile.html", add this to the bottom, under block content:
+```
+{% block postloadjs %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'profiles/js/countryfield.js' %}"></script>
+{% endblock %}
+```
+
+create a new folder in profiles > static > profiles named "js", and file named "countryfield.js" in there.
+Add the following to the js file:
+```
+let countrySelected = $('#id_default_country').val();
+if(!countrySelected) {
+    $('#id_default_country').css('color', '#aab7c4');
+}
+$('#id_default_country').change(function() {
+    countrySelected = $(this).val();
+    if(!countrySelected) {
+        $(this).css('color', '#aab7c4');
+    } else {
+        $(this).css('color', '#000');
+    }
+});
+```
+
+profiles > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/149abda4318106704ac8d3118b8e5a63ef070619/profiles/views.py)
+
+templates > includes > toasts > "toast_success.html", update ~line17 the line `{% if grand_total %}` to be:
+`{% if grand_total and not on_profile_page %}`
+
+
+git add .
+git commit -m "Added profile form, views and updated template"
+git push
