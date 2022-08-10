@@ -2436,3 +2436,80 @@ templates > includes > toasts > "toast_success.html", update ~line17 the line `{
 git add .
 git commit -m "Added profile form, views and updated template"
 git push
+
+
+Add Order Histroy to user Profile
+
+profiles > templates > profiles > "profile.htnml", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/3196f480e8e7c22c8f6bf3badc351616268cd365/profiles/templates/profiles/profile.html)
+
+profiles > static > profiles > css > "profile.css", add this to the top of the styling:
+```
+.order-history {
+    max-height: 416px; /* height of profile form + submit button */
+    overflow-y: auto;
+}
+```
+
+profiles > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/3196f480e8e7c22c8f6bf3badc351616268cd365/profiles/views.py)
+
+profiles > "urls.py", update it to be:
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.profile, name='profile'),
+    path('order_history/<order_number>', views.order_history, name='order_history'),
+]
+```
+
+checkout > templates > checkout > "checkout_success.html", update the final div/row to be:
+```
+        <div class="row">
+			<div class="col-12 col-lg-7 text-right">
+                {% if from_profile %}
+                <a href="{% url 'profile' %}" class="btn btn-black rounded-0 my-2">
+					<span class="icon mr-2">
+						<i class="fas fa-angle-left"></i>
+					</span>
+					<span class="text-uppercase">Back to Profile</span>
+				</a>
+                {% else %}
+				<a href="{% url 'products' %}?category=new_arrivals,deals,clearance" class="btn btn-black rounded-0 my-2">
+					<span class="icon mr-2">
+						<i class="fas fa-gifts"></i>
+					</span>
+					<span class="text-uppercase">Now check out the latest deals!</span>
+				</a>
+                {% endif %}
+			</div>
+		</div>
+```
+see this for reference, at the bottom:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/3196f480e8e7c22c8f6bf3badc351616268cd365/checkout/templates/checkout/checkout_success.html)
+
+checkout > "admin.py" > add `'user_profile',` inside the 'OrderAdmin' > 'fields' section, before 'date
+and after 'order_number'.
+
+checkout > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/be009dd6c8db8c9cbc18aa5b8dd8a04daa194ed0/checkout/views.py#L143)
+
+`python3 manage.py runserver`
+Clear your delivery info in your My Profile page. Save the clear form. Go through ordering an item.
+Checkout and place order. When successful, it should list that order in the 'Order Histroy' section
+in My Profile and your 'Default Delivery Information' should be populated with what you entered during
+checkout.
+Click on Order Histroy, Order Number link. It should take to order_history page.
+
+checkout > "views.py", in the checkout view, update it to be:
+(do not copy and paste entire document. just the checkout view section, as there are errors elsewhere)
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/3196f480e8e7c22c8f6bf3badc351616268cd365/checkout/views.py)
+
+`python3 manage.py runserver` and test by trying to buy another item. the form at checkout should automatically
+be filled in. if 'Full Name' and/or 'Email address' aren't filled in, update in /admin, Users section (url in browser)
+
+git add .
+git commit -m "Profiles - added order history and updated checkout views"
+git push
