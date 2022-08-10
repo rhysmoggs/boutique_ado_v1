@@ -2163,3 +2163,147 @@ in profiles app, create a file and name it "static/profiles/css/profile.css". ad
 git add .
 git commit -m "Add profile app"
 git push
+
+
+Update allauth templates
+
+templates > allauth > account > "base.html", update it to be:
+```
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container header-container">
+        <div class="overlay"></div>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="allauth-form-inner-content">
+                    {% block inner_content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+```
+
+templates > allauth > account > "account_inactive.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/account_inactive.html)
+
+templates > allauth > account > "email_confirm.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/email_confirm.html)
+
+templates > allauth > account > "email.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/email.html)
+
+templates > allauth > account > "login.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/login.html)
+
+templates > allauth > account > "logout.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/logout.html)
+
+templates > allauth > account > "password_change.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_change.html)
+
+templates > allauth > account > "password_reset.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset.html)
+
+templates > allauth > account > "login.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_done.html)
+
+templates > allauth > account > "password_reset_done.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_done.html)
+
+templates > allauth > account > "password_reset_from_key.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_from_key.html)
+
+templates > allauth > account > "password_reset_from_key_done.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_from_key_done.html)
+
+templates > allauth > account > "password_set.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_set.html)
+
+templates > allauth > account > "signup.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/signup.html)
+
+templates > allauth > account > "signup_closed.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/signup_closed.html)
+
+templates > allauth > account > "verification_sent.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/verification_sent.html)
+
+templates > allauth > account > "verified_email_required.html", update to to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/verified_email_required.html)
+
+
+
+static > css > "base.css", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/eb4e5fd74558387f25a740820235f33a33834066/static/css/base.css)
+
+
+`python3 manage.py runserver`
+try to login via website's 'My Account' > 'Login' (try the username you created on project startup), should give an error:
+"RelatedObjectDoesNotExist at /accounts/login/   .User has no userprofile."
+one way to fix it, in gitpod:
+profiles > "models.py", update this area to be as below, commenting out sections.
+
+```
+# if created:
+UserProfile.objects.create(user=instance)
+# Existing users: just save the profile
+# instance.userprofile.save()
+```
+go back to the website. log in again. no error should occurr.
+Then, go back to profiles > "models.py" and change the previously commented out section back to how it was.
+Repeat these 2 steps for every username created before arriving to this part of the project setup.
+
+"Another way you could do this if you had many users who needed profiles created would be to do it through
+the shell by getting all the users. And then creating a profile for them in a loop but since I just have 
+my one admin user this works fine"
+
+log out of website profile. Go to My account > Register. create a new username.
+go back to gitpod console, it should log the email confirmation link there.
+copy the link from "/accounts/confirm-email..." onwards. paste into the url of browser.
+It will take you to the Confirm Email page. Click 'Confirm' button. Then log in.
+
+templates > "base.html", update My Profile href link section ~line77 `<a href="" class="dropdown-item">My Profile</a>` to be:
+`<a href="{% url 'profile' %}" class="dropdown-item">My Profile</a>`
+profiles > "views.py", update it to be:
+```
+from django.shortcuts import render, get_object_or_404
+
+from .models import UserProfile
+
+
+def profile(request):
+    """ Display the user's profile. """
+    profile = get_object_or_404(UserProfile, user=request.user)
+
+    template = 'profiles/profile.html'
+    context = {
+        'profile': profile,
+    }
+
+    return render(request, template, context)
+```
+
+profiles > templates > profiles > "profile.html", update the block content at the bottom to include profile,
+so it is:
+```
+{% block content %}
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2 class="logo-font mb-4">My Profile</h2>
+                <hr>
+            </div>
+        </div>
+        {{ profile }}
+{% endblock %}
+```
+go to My Account > My Profile on website. should display username there.
+
+git add .
+git commit -m "Updated allauth templates and tested profiles"
+git push
