@@ -2513,3 +2513,13 @@ be filled in. if 'Full Name' and/or 'Email address' aren't filled in, update in 
 git add .
 git commit -m "Profiles - added order history and updated checkout views"
 git push
+
+
+checkout > "webhook_handler.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/be009dd6c8db8c9cbc18aa5b8dd8a04daa194ed0/checkout/webhook_handler.py)
+
+to test this, go to:
+checkout > static > checkout > js > "stripe_elements.js" and comment out ~line110 `form.save()`, comment it out.
+
+
+
