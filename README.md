@@ -2843,3 +2843,34 @@ git add .
 git commit -m "Securing the views"
 git push
 
+
+Style the Image area on the Add/Edit product form.
+"So Django forms work with what are called widgets and this little widget that handles the image field 
+on our model is called a clearable file input. Conveniently because Django is just Python we can 
+inherit this class and customize it."
+
+products > create a new file named "widgets.py", then fill it with:
+```
+from django.forms.widgets import ClearableFileInput
+from django.utils.translation import gettext_lazy as _
+
+
+class CustomClearableFileInput(ClearableFileInput):
+    clear_checkbox_label = _('Remove')
+    initial_text = _('Current Image')
+    input_text = _('')
+    template_name = 'products/custom_widget_templates/custom_clearable_file_input.html'
+```
+
+products > templates > products, create a file named "custom_widget_templates/custom_clearable_file_input.html"
+in "custom_clearable_file_input.html", using the following as a guide:
+(https://github.com/django/django/blob/main/django/forms/templates/django/forms/widgets/clearable_file_input.html)
+so it eventually ends up like this (just copy+paste this, but use above link as reading for django base):
+(https://github.com/ckz8780/boutique_ado_v1/blob/bef1c8f38ea2774f75b18c15d5927b5409083cf9/products/templates/products/custom_widget_templates/custom_clearable_file_input.html)
+
+products > "forms.py" and update it to be:
+(https://github.com/ckz8780/boutique_ado_v1/blob/bef1c8f38ea2774f75b18c15d5927b5409083cf9/products/forms.py)
+
+git add .
+git commit -m "Securing the views"
+git push
