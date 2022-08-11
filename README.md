@@ -2716,6 +2716,9 @@ git add .
 git commit -m "Finished add product functionality"
 git push
 
+
+EDIT PRODUCTS
+
 products > templates > products > create a new file named "edit_product.html", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/de5e400ea7efd03403e289435b2b821fd6f5748a/products/templates/products/edit_product.html)
 
@@ -2753,3 +2756,71 @@ Should work.
 git add .
 git commit -m "Add ability to edit products"
 git push
+
+
+EDIT PRODUCTS
+products > "urls.py", add: `path('delete/<int:product_id>/', views.delete_product, name='delete_product'),` to the urlspatterns.
+
+products > "views.py" and add the following to the bottom:
+```
+def delete_product(request, product_id):
+    """ Delete a product from the store """
+    product = get_object_or_404(Product, pk=product_id)
+    product.delete()
+    messages.success(request, 'Product deleted!')
+    return redirect(reverse('products'))
+```
+and update the add_product to be (so there's no need to search for a newly created product):
+```
+def add_product(request):
+    """ Add a product to the store """
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, 'Successfully added product!')
+            return redirect(reverse('product_detail', args=[product.id]))
+        else:
+            messages.error(request, 'Failed to add product. Please ensure the form is valid.')
+    else:
+        form = ProductForm()
+        
+    template = 'products/add_product.html'
+    context = {
+        'form': form,
+    }
+
+    return render(request, template, context)
+```
+to test Delete:
+`python3 manage.py runserver` and then 'Product Management'. Add a new product. Take note of the product id
+(number) in the url when creating the new product (e.g. .../product/177/). then, change the url to be
+.../product/delete/177/ . Once Enter is pressed, a message should confirm deletion.
+
+Adding Edit and Delete links:
+products > templates > products > "products.html" and add the following under ~line84(`{% endif %}`), so, still
+within the div col:
+```
+                                            {% if request.user.is_superuser %}
+                                                <small class="ml-3">
+                                                    <a href="{% url 'edit_product' product.id %}">Edit</a> | 
+                                                    <a class="text-danger" href="{% url 'delete_product' product.id %}">Delete</a>
+                                                </small>
+                                            {% endif %}
+```
+so it should look like (dont copy and paste whole doc):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/c71609890aea8a7c4e534e25d1906cc4111d7725/products/templates/products/products.html)
+
+products > templates > products > "product_detail.html" and add the following under ~line44(`{% endif %}`) and above
+`<p class="mt-3">{{ product.description }}</p>`:
+```
+                    {% if request.user.is_superuser %}
+                        <small class="ml-3">
+                            <a href="{% url 'edit_product' product.id %}">Edit</a> | 
+                            <a class="text-danger" href="{% url 'delete_product' product.id %}">Delete</a>
+                        </small>
+                    {% endif %}
+```
+so it should look like (dont copy and paste whole doc):
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/c71609890aea8a7c4e534e25d1906cc4111d7725/products/templates/products/product_detail.html)
+
