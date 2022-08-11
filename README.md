@@ -2715,3 +2715,41 @@ delete image from media (in gitpod) too.
 git add .
 git commit -m "Finished add product functionality"
 git push
+
+products > templates > products > create a new file named "edit_product.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/de5e400ea7efd03403e289435b2b821fd6f5748a/products/templates/products/edit_product.html)
+
+products > "views.py" and add the following to the bottom:
+```
+def edit_product(request, product_id):
+    """ Edit a product in the store """
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully updated product!')
+            return redirect(reverse('product_detail', args=[product.id]))
+        else:
+            messages.error(request, 'Failed to update product. Please ensure the form is valid.')
+    else:
+        form = ProductForm(instance=product)
+        messages.info(request, f'You are editing {product.name}')
+
+    template = 'products/edit_product.html'
+    context = {
+        'form': form,
+        'product': product,
+    }
+
+    return render(request, template, context)
+```
+
+products > "urls.py", add: `path('edit/<int:product_id>/', views.edit_product, name='edit_product'),` to the urlspatterns.
+
+`python3 manage.py runserver` and then /products/edit/1 in the browser. alter the form and 'Update Product'.
+Should work.
+
+git add .
+git commit -m "Add ability to edit products"
+git push
