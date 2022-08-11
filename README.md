@@ -2824,3 +2824,22 @@ products > templates > products > "product_detail.html" and add the following un
 so it should look like (dont copy and paste whole doc):
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/c71609890aea8a7c4e534e25d1906cc4111d7725/products/templates/products/product_detail.html)
 
+`python3 manage.py runserver` and then Edit/Delete should be under all products. Don't test on current products.
+Create a new product. then Edit/Delete link, as there is no defensive programming in place.
+
+git add .
+git commit -m "Add ability to edit products"
+git push
+
+
+Only allow superusers to edit/delete (securing the views)
+products > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e439fefda305c7b21644b59d470dc310b5b27797/products/views.py)
+
+profiles > "views.py", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/e439fefda305c7b21644b59d470dc310b5b27797/profiles/views.py)
+
+git add .
+git commit -m "Securing the views"
+git push
+
