@@ -2625,3 +2625,93 @@ products > templates > products, create a file named "add_product.html" and add 
 git add .
 git commit -m "Add product view, url and template"
 git push
+
+products > "views.py", update the "add_product" to be:
+```
+def add_product(request):
+    """ Add a product to the store """
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully added product!')
+            return redirect(reverse('add_product'))
+        else:
+            messages.error(request, 'Failed to add product. Please ensure the form is valid.')
+    else:
+        form = ProductForm()
+        
+    template = 'products/add_product.html'
+    context = {
+        'form': form,
+    }
+
+    return render(request, template, context)
+```
+
+profiles > "views.py", "profile" to be:
+```
+def profile(request):
+    """ Display the user's profile. """
+    profile = get_object_or_404(UserProfile, user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully')
+        else:
+            messages.error(request, 'Update failed. Please ensure the form is valid.')
+    else:
+        form = UserProfileForm(instance=profile)
+    orders = profile.orders.all()
+
+    template = 'profiles/profile.html'
+    context = {
+        'form': form,
+        'orders': orders,
+        'on_profile_page': True
+    }
+
+    return render(request, template, context)
+```
+
+`python3 manage.py runserver` and then /products/add/ in the browser to check.
+add a product to the website. search for it. then try clicking on Add to Bag. error should occur.
+to fix:
+
+templates > includes > toasts > "toast_success.html", update the content within the `<div class="col-3 my-1">`
+~line22 to be: 
+```
+                            {% if item.product.image %}
+                            <img class="w-100" src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                            <img class="w-100" src="{{ MEDIA_URL }}noimage.png" alt="{{ item.product.name }}">
+                            {% endif %}
+```
+
+bag > templates > bag > "bag.html", update the content within the `<td class="p-3 w-25">` ~line41 to be:
+```
+                                        {% if item.product.image %}
+                                        <img class="img-fluid rounded" src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                        {% else %}
+                                        <img class="img-fluid rounded" src="{{ MEDIA_URL }}noimage.png" alt="{{ item.product.name }}">
+                                        {% endif %}
+```
+
+templates > "base.html", ~line75, update the line `<a href="" class="dropdown-item">Product Management</a>`,
+to be `<a href="{% url 'add_product' %}" class="dropdown-item">Product Management</a>`
+
+templates > includes > "mobile-top-header.html",  ~line38, update the Product Management line
+`<a href="{% url 'account_logout' %}" class="dropdown-item">Product Management</a>`, to be
+`<a href="{% url 'add_product' %}" class="dropdown-item">Product Management</a>`
+
+`python3 manage.py runserver` and then /products/add/ in the browser. add a product to the website.
+add an image to the product. search for it. then Add to Bag. should work.
+delete the newly made products from the /admin > Products etc.
+(if it errors, clear website data and restart server)
+delete image from media (in gitpod) too.
+
+git add .
+git commit -m "Finished add product functionality"
+git push
