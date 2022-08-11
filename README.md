@@ -2599,3 +2599,29 @@ class ProductForm(forms.ModelForm):
 git add .
 git commit -m "Add product form"
 git push
+
+products > "views.py", add `from .forms import ProductForm` to the top along with other imports,
+and this to the bottom:
+```
+def add_product(request):
+    """ Add a product to the store """
+    form = ProductForm()
+    template = 'products/add_product.html'
+    context = {
+        'form': form,
+    }
+
+    return render(request, template, context)
+```
+
+products > "urls.py", add `path('add/', views.add_product, name='add_product'),` to the urlpatterns,
+and update the product_detail url to be `path('<int:product_id>/', views.product_detail, name='product_detail'),`
+
+products > templates > products, create a file named "add_product.html" and add to it:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/90bfac3ad4932550b4457a698f7df8ab79a681bc/products/templates/products/add_product.html)
+
+`python3 manage.py runserver` and then /products/add/ in the browser to check.
+
+git add .
+git commit -m "Add product view, url and template"
+git push
