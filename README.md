@@ -2872,5 +2872,49 @@ products > "forms.py" and update it to be:
 (https://github.com/ckz8780/boutique_ado_v1/blob/bef1c8f38ea2774f75b18c15d5927b5409083cf9/products/forms.py)
 
 git add .
-git commit -m "Securing the views"
+git commit -m "Fixing the image field"
+git push
+
+static > css > "base.css", paste the following above the "fixed top navbar only on medium and up" styles
+```
+/* Product Form */
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox .custom-control-label::before {
+    border-radius: 0;
+    border-color: #dc3545;
+}
+
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    border-radius: 0;
+}
+```
+
+to remove the crispy forms "image" info and add js to improve image uploading msg:
+products > templates > products > "edit_product.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5880efee43b3b9ea1276a09ca972f4588001c59/products/templates/products/edit_product.html)
+and also,
+products > templates > products > "add_product.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/f5880efee43b3b9ea1276a09ca972f4588001c59/products/templates/products/add_product.html)
+
+run server, add a new product, add image, update it through Edit and remove image, update. then delete product. should all work.
+
+git add .
+git commit -m "Fixing the image field further"
 git push
