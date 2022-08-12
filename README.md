@@ -1698,6 +1698,12 @@ copy the website url from the address bar
 go to Stripe's website > Developers (top-right) > Webhooks (left menu) > Add an Endpoint button.
 "Endpoint URL": paste_your_website_address_here/checkout/wh/
 PREVIOUS ERROR, ALTHOUGH THE WEB ADDRESS/URL WAS CORRECT, IT WAS DIFFERENT WHEN COMPARING WH AND SERVER ADDRESS AT A LATER POINT.
+( remeber, to try and do these steps if there's a ~400 error when testing, ignore for now (further info below)
+    delete the current webhook off the Stripe website.
+    "CLI: `export STRIPE_PUBLIC_KEY=<public key from stripe website>`
+    CLI: `export STRIPE_SECRET_KEY=<secret key from stripe website>`
+    go to gitpod CLI: `export STRIPE_WH_SECRET=paste_your_signing_secret_here`"
+)
 ALSO, MAKE SURE THE GITPOD WORKSPACE IS SHARED (BOTTOM, WHEN SHARING E.G. FOR OTHERS TO LOOK AT YOUR GITPOD)
 Select events then tick the box for Select all events, then Add events button. Add entpoint button.
 "Reveal" the 'Signing secret', and copy it.
@@ -2918,3 +2924,7 @@ run server, add a new product, add image, update it through Edit and remove imag
 git add .
 git commit -m "Fixing the image field further"
 git push
+
+
+Creating a Heroku App
+
