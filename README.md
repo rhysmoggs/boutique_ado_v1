@@ -387,7 +387,7 @@ go to products (app) > "models.py" and update to:
 
 `python3 manage.py makemigrations --dry-run`
 
-should error
+it should error
 `pip3 install Pillow`
 
 It's worth mentioning though that if you're not going to use the plan flag
