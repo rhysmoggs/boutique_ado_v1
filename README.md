@@ -2928,3 +2928,55 @@ git push
 
 Creating a Heroku App
 
+Log In to heroku website, create new app, choose closest region (Europe for me), name the app.
+Still in heroku website, go to 'Resources' tab, then in 'Add-ons', type postgres and select 'Heroku Postgres'
+from the dropdown choices.
+Plan name = 'Hobby Dev - Free', then 'Submit Order Form' button
+Follow this:
+"To use Postgres we need to go back to gitpod and install dj_database_url, and psycopg2.
+So I'll do that now with `pip3 install dj_database_url`
+And `pip3 install psycopg2-binary`
+Now I can freeze the requirements with `pip3 freeze > requirements.txt`"
+
+in gitpod, go to boutique-ado > "settings.py", add `import dj_database_url` to the bottom of the list of imports.
+then, comment out the 'DATABASES' section, and add:
+```
+DATABASES = {
+    'default': dj_database_url.parse()
+}
+```
+"And give it the database URL from Heroku, which you can either get from your Config Variables in your app 'Settings' tab.
+or from the command line by typing Heroku config." so that it looks like:
+```
+DATABASES = {
+    'default': dj_database_url.parse('your_postgres_db_URL_here')
+}
+```
+"With that saved, we're ready to connect to our new Heroku database and run migrations.
+Remember that because we're connecting to Postgres now, we need to run all these migrations again and we can see that with the show
+migrations command since none of them are marked off."
+
+`python3 manage.py showmigrations`
+`python3 manage.py migrate`
+
+"Now to import all our product data, we can use our fixtures again by first loading in the categories and then the products.
+To load the categories, I'll use python3 manage.py loaddata categories. And then do the same for products.
+And remember it's important to do them in that order because the products depend on the categories already existing."
+so,
+`python3 manage.py loaddata categories`
+`python3 manage.py loaddata products`
+
+"Finally I'll just give myself a super user to log in with."
+`python3 manage.py createsuperuser`
+
+"Before I commit I'm gonna remove the Heroku database config. And uncomment the original so our database URL doesn't end up in version control."
+So,
+Un-comment the 'DATABASES' section in boutique_ado > "settings.py" that we commented out earlier. (make it active now)
+and delete:
+```
+DATABASES = {
+    'default': dj_database_url.parse()
+}
+```
+
+git add .
