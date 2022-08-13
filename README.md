@@ -3014,9 +3014,9 @@ in CLI `heroku login -i`, and log in with heroku info
 e.g.
 `heroku config:set DISABLE_COLLECTSTATIC=1 --app rhysmoggs-boutique-ado`, for this example
 
-boutique_ado > "settings.py", update `ALLOWED_HOSTS = []` to be `ALLOWED_HOSTS = ['your-heroku-app-name-here.heroku.com', 'localhost']`
+boutique_ado > "settings.py", update `ALLOWED_HOSTS = []` to be `ALLOWED_HOSTS = ['your-heroku-app-name-here.herokuapp.com', 'localhost']`
 e.g.
-`ALLOWED_HOSTS = ['rhysmoggs-boutique-ado.heroku.com', 'localhost']` for this example
+`ALLOWED_HOSTS = ['rhysmoggs-boutique-ado.herokuapp.com', 'localhost']` for this example
 
 `ACCOUNT_EMAIL_VERIFICATION = 'none'`
 
@@ -3024,4 +3024,36 @@ git add .
 git commit -m "Deploy to Heroku"
 git push
 
-git push heroku main
+The following point is an extract taken from Code Institute:
+
+    "Automated Deployments from GitHub disabled by Heroku
+    Due to a security issue, Heroku has disabled automated deployments from GitHub. Unfortunately, we have no indication if or when they will reactivate this. In order for you to deploy while this situation persists, please follow the steps below to deploy from your Gitpod workspace:
+
+    - Open the terminal.
+    - For those of you who are using MFA/2FA: please scroll down to see the additional steps required.
+    For those of you not using MFA/2FA: Log in to Heroku and enter your details.
+    command: heroku login -i
+    - Get your app name from heroku.
+    command: heroku apps
+    - Set the heroku remote. (Replace <app_name> with your actual app name and remove the <> characters)
+    command: heroku git:remote -a <app_name>
+    - Add and commit any changes to your code if applicable
+    command: git add . && git commit -m "Deploy to Heroku via CLI"
+    - Push to both GitHub and Heroku
+    command: git push origin main
+    command: git push heroku main
+
+    MFA/2FA enabled?
+    - Click on Account Settings (under the avatar menu) on the Heroku Dashboard.
+    - Scroll down to the API Key section and click Reveal. Copy the key.
+    - Back in your Gitpod workspace, enter the command: heroku_config , and enter your API key you copied when prompted.
+    - Continue from step 3 above. If you get prompted to log in at any point:
+      - Enter your Heroku username.
+      - Enter the API key you just copied.
+    
+    Need to deploy again?
+    You should just be able to add, commit and push, and if prompted enter your username and API key again."
+
+Click 'Open App' in heroku, and your project will be displayed here.
+
+Due to the automatic deployment issues on heroku's part, any changes to your app will need to manually be added, commited and pushed again.
