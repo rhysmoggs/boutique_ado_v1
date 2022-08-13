@@ -2980,3 +2980,48 @@ DATABASES = {
 ```
 
 git add .
+git commit -m "Creating a Heroku App and setting up postgres db"
+git push
+
+
+DEPLOYING TO HEROKU
+
+boutique_ado > "settings.py", update the 'DATABASES' section to be:
+```
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+```
+
+`pip3 install gunicorn`
+`pip3 freeze > requirements.txt`
+
+create a file named "Procfile" (outside of all the apps. so, create it where requirements.txt, gitignore etc are)
+and add this to it:
+`web: gunicorn boutique_ado.wsgi:application` (no empty space below)
+
+in CLI `heroku login -i`, and log in with heroku info
+`heroku config:set DISABLE_COLLECTSTATIC=1` (if only one heroku app) OR
+`heroku config:set DISABLE_COLLECTSTATIC=1 --app your-heroku-app-name-here` (if more than one heroku app on website)
+e.g.
+`heroku config:set DISABLE_COLLECTSTATIC=1 --app rhysmoggs-boutique-ado`, for this example
+
+boutique_ado > "settings.py", update `ALLOWED_HOSTS = []` to be `ALLOWED_HOSTS = ['your-heroku-app-name-here.heroku.com', 'localhost']`
+e.g.
+`ALLOWED_HOSTS = ['rhysmoggs-boutique-ado.heroku.com', 'localhost']` for this example
+
+`ACCOUNT_EMAIL_VERIFICATION = 'none'`
+
+git add .
+git commit -m "Deploy to Heroku"
+git push
+
+git push heroku main
