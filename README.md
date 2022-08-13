@@ -3054,6 +3054,20 @@ The following point is an extract taken from Code Institute:
     Need to deploy again?
     You should just be able to add, commit and push, and if prompted enter your username and API key again."
 
-Click 'Open App' in heroku, and your project will be displayed here.
-
 Due to the automatic deployment issues on heroku's part, any changes to your app will need to manually be added, commited and pushed again.
+
+Click 'Open App' in heroku, and your project will be displayed here - no styling, but will add static files later.
+
+Google django secret key generator website, generate one then copy it.
+Go to heroku website > Settings > Reveal Config Vars, add a new one:
+"SECRET_KEY": "paste-yout-django-secret-key-here"
+
+boutique_ado > "settings.py", change the `SECRET_KEY = 'your-previous-secret-key`
+to be:
+``SECRET_KEY = os.environ.get('SECRET_KEY', '')`
+and change `DEBUG = True` to be `DEBUG = 'DEVELOPMENT' in os.environ`
+
+git add .
+git commit -m "Removed secret key and set debug"
+git push
+git push heroku main
