@@ -553,7 +553,7 @@ update "base.css" to add a media query at the bottom:
 ```
 
 git add .
-git commit -m "added product details functionality
+git commit -m "added product details functionality"
 git push
 
 FILTER/Queries and Categories
@@ -734,6 +734,7 @@ def view_bag(request):
 ```
 
 `mkdir -p bag/templates/bag`
+create "bag.html" within the final bag folder.
 
 copy the info in home > "index.html" and paste into the new bag.html, then delete the code within the blockcontent
 create "urls.py" in the bag main folder and add:
@@ -1393,6 +1394,20 @@ python3 manage.py runserver
 git add .
 git commit -m "Added checkout views and templates"
 git push
+
+update checkout > static > checkout > "checkout.css" to be:
+```
+.fieldset-label {
+    position: relative;
+    right: .5rem;
+}
+
+#payment-form .form-control,
+#card-element {
+    color: #000;
+    border: 1px solid #000;
+}
+```
 
 
 STRIPE - create an account at (https://stripe.com/).
@@ -2162,7 +2177,7 @@ in profiles app, create a file and name it "templates/profiles/profile.html". ad
 {% endblock %}
 ```
 
-in profiles app, create a file and name it "static/profiles/css/profile.css". add:
+in profiles app, create a file and name it "static/profiles/css/profile.css".
 
 `python3 manage.py runserver` and add /profile to address. Should load the basic profile page.
 
@@ -2212,9 +2227,6 @@ templates > allauth > account > "password_change.html", update to to be:
 
 templates > allauth > account > "password_reset.html", update to to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset.html)
-
-templates > allauth > account > "login.html", update to to be:
-(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_done.html)
 
 templates > allauth > account > "password_reset_done.html", update to to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/templates/allauth/account/password_reset_done.html)
@@ -2525,10 +2537,10 @@ checkout > "webhook_handler.py", update it to be:
 (https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/be009dd6c8db8c9cbc18aa5b8dd8a04daa194ed0/checkout/webhook_handler.py)
 
 to test this, go to:
-checkout > static > checkout > js > "stripe_elements.js" and comment out ~line110 `form.save()`, comment it out.
+checkout > static > checkout > js > "stripe_elements.js" and comment out ~line110 `form.submit();`, comment it out.
 run server, try to order and go through checkout. it should fail to load the screen but still submit the form/order.
 check in /admin for that order, and it should also be displayed on My Profie, Order History.
-checkout > static > checkout > js > "stripe_elements.js" and re-enable ~line110 `form.save()` so it's back to being active.
+checkout > static > checkout > js > "stripe_elements.js" and re-enable ~line110 `form.submit();` so it's back to being active.
 
 git add .
 git commit -m "Updated webbook handler to handle profiles"
@@ -2764,7 +2776,7 @@ git commit -m "Add ability to edit products"
 git push
 
 
-EDIT PRODUCTS
+DELETE PRODUCTS
 products > "urls.py", add: `path('delete/<int:product_id>/', views.delete_product, name='delete_product'),` to the urlspatterns.
 
 products > "views.py" and add the following to the bottom:
@@ -2834,7 +2846,7 @@ so it should look like (dont copy and paste whole doc):
 Create a new product. then Edit/Delete link, as there is no defensive programming in place.
 
 git add .
-git commit -m "Add ability to edit products"
+git commit -m "Add ability to delete products"
 git push
 
 
@@ -3005,7 +3017,8 @@ else:
 `pip3 freeze > requirements.txt`
 
 create a file named "Procfile" (outside of all the apps. so, create it where requirements.txt, gitignore etc are)
-and add this to it:
+and add this to it, making sure you use your gitpod repo name:
+`web: gunicorn your_gipod_repo_name.wsgi:application` (no empty space below) so:
 `web: gunicorn boutique_ado.wsgi:application` (no empty space below)
 
 in CLI `heroku login -i`, and log in with heroku info
@@ -3019,11 +3032,14 @@ e.g.
 `ALLOWED_HOSTS = ['rhysmoggs-boutique-ado.herokuapp.com', 'localhost']` for this example
 
 `ACCOUNT_EMAIL_VERIFICATION = 'none'`
+(make sure to change this back to `ACCOUNT_EMAIL_VERIFICATION = 'mandatory'` before production/launching website)
 
-git add .
-git commit -m "Deploy to Heroku"
-git push
+`git add .`
+`git commit -m "Deploy to Heroku"`
+`git push`
 
+Ignore the below if automatic is working.
+Although automatic deployment is now working again, at the first time of writing+developing, heroku had disabled automatic deployment, this was the work around:
 The following point is an extract taken from Code Institute:
 
     "Automated Deployments from GitHub disabled by Heroku
@@ -3049,14 +3065,26 @@ The following point is an extract taken from Code Institute:
     - Back in your Gitpod workspace, enter the command: heroku_config , and enter your API key you copied when prompted.
     - Continue from step 3 above. If you get prompted to log in at any point:
       - Enter your Heroku username.
-      - Enter the API key you just copied.
+      - Enter the API key yoclearu just copied.
     
     Need to deploy again?
     You should just be able to add, commit and push, and if prompted enter your username and API key again."
 
 Due to the automatic deployment issues on heroku's part, any changes to your app will need to manually be added, commited and pushed again.
+Ignore the above if automatic is working.
+
+then push to heroku:
+`git push heroku main`
+    if error 'fatal, heroku does not appear to be a git repo...', you'll need to initialize by:
+    heroku git:remote -a your_heroku_app_name_here
+    `heroku git:remote -a rhysmoggs-boutique-ado` then `git push heroku main` again.
 
 Click 'Open App' in heroku, and your project will be displayed here - no styling, but will add static files later.
+
+for automatic deployment:
+in Heroku > Deploy > Deployment Method, choose GitHub
+Connect to Github, search for your repo e.g. boutique.. then select it and click Connect.
+Enable Automatic Deploys
 
 Google django secret key generator website, generate one then copy it.
 Go to heroku website > Settings > Reveal Config Vars, add a new one:
@@ -3071,3 +3099,469 @@ git add .
 git commit -m "Removed secret key and set debug"
 git push
 git push heroku main
+
+
+Creating an AWS Account
+
+to store our static files and images
+
+
+Go to https://aws.amazon.com/ and create an account.
+
+'Create an AWS account' button > Click 'Create a new AWS account'
+on the next page, enter an email in the 'Root user email address'
+and an username for 'AWS account name'. Then, click 'Verify email address'
+Verify your email and continue, enter and confirm password.
+Choose 'Personal', then enter your details.
+Enter your Billing information. You may need to approve this payment.
+Confirm your identity.
+Select your support plan - choose free for this project.
+
+go to AWS Management Console, and sign in.
+
+go to 'Services' and either use the search bar or find 'S3' in the list of all services.
+
+Select 'Buckets' in the left-hand side menu (it may be hidden, so reveal it with the button on left)
+Click 'Create Bucket' and name it whatever you wish, although it's good practice to name it the same
+as your heroku app name.
+Select the Region closest to you, if it doesn't automatically do so.
+
+Follow this guide for an updated process:
+(https://codeinstitute.s3.amazonaws.com/fullstack/AWS%20changes%20sheet.pdf)
+(basically, check 'ACLs enabled' and 'Bucket owner preferred')
+
+Uncheck 'Block all public access',
+Tick the box with the warning "I acknowledge that the current settings 
+might result in this bucket and the objects within becoming public."
+
+'Create Bucket'
+
+Select the newly created bucket from the list.
+'Properties' tab > scroll to bottom to find 'Static website hosting' and click 'Edit' then 'Enable' it.
+Make sure 'Host a static website' is active, then in 'Index document' type "index.html" and in 
+'Error document - optional' type "error.html". Click 'Save changes'.
+
+'Permissions' tab > scroll down to 'Cross-origin resource sharing (CORS)' and click 'Edit', paste the
+following into the empty space:
+```
+[
+  {
+    "AllowedHeaders": [
+      "Authorization"
+    ],
+    "AllowedMethods": [
+      "GET"
+    ],
+    "AllowedOrigins": [
+      "*"
+    ],
+    "ExposeHeaders": []
+  }
+]
+```
+Click 'Save changes'
+Next, find the 'Bucket policy' section within the 'Permissions' tab, click 'Edit'
+Click 'Policy generator'
+Step 1: Select Policy Type = 'S3 Bucket Policy', from the dropdown, select this.
+Effect = Allow
+Principal = *
+Actions = GetObject
+ARN = copy abnd paste it from the previous page in the 'Edit Bucket Policy' page, under 'Bucket ARN'
+Click 'Add Statement' then 'Generate Policy'.
+Copy the Policy (the code text), paste it into the Bucket Policy Editor on the previous page.
+Then add `/*` to the end of the 'Rescource' key (basically, the end of your app name add '/*')
+Click 'Save changes'
+
+'Permissions' tab > scroll down to 'Access control list (ACL)' and click 'Edit'
+make sure 'Everyone (public access)' > 'Objects' > 'List' box is ticked and tick the warning box
+"I understand the effects of these changes on my objects and buckets."
+Click 'Save changes'
+
+Go back to 'Services' on top left, search or find 'IAM'
+Select 'User groups' on left-hand-side menu > 'Create group' and name the group, in this case
+"manage-boutique-ado" then 'Create group'
+Select 'Policies' on the left-hand-side menu then 'Create policy' and then 'JSON' tab then
+'Import managed policy' and in the search input type 's3' and choose 'AmazonS3FullAccess'
+Click 'Import'
+
+In a sperate tab, open the S3 again, go to your Bucket > Permissions > Bucket Policy > Edit and
+copy the Bucket ARN.
+
+Back to the IAM tab, instead of `"*"` in the "Resources" JSON code, paste the Bucket ARN inside a list
+so that "Resource" now looks like:
+```
+"Resource": [
+    "your-Bucket-ARN-here",
+    "your-Bucket-ARN-here/*"
+]
+```
+(above, one item is the bucket itelf, and the /* is for all files and folders in the bucket)
+
+Click 'Next:tags' then 'Next:review'
+Review policy > Name = whatever you wish, in this case "rhysmoggs-boutique-ado-policy"
+Description = "Access to S3 bucket for Boutique Ado static files"
+'Create policy'
+
+on left-hand-side menu, click 'User Groups', select your group > Permissions > Add Permissions
+dropdown towards the right and select 'Attach Policies'
+Search for the policiy we just created, tick the box to select it, then 'Add permissions'
+
+left-hand-side menu select 'Users' > Add Users > name it "boutique-ado-staticfiles-user" and
+tick "Access key - Programmatic access" box.
+Click 'Next: Persmissions' > tick box for our group in the list then 'Next:tags' > 'Next:review' >
+'Create user' > 'Download .csv' (very important to do so, as you can't download it again)
+Close
+
+
+Back in gitpod CLI
+`pip3 install boto3`
+`pip3 install django-storages`
+`pip3 freeze > requirements.txt`
+
+boutique_ado > "settings.py", add `'storages',` to our 'INSTALLED_APPS', under the 'other' section
+also,
+a space under MEDIA URL section add this new section:
+```
+if 'USE_AWS' in os.environ:
+    # Bucket Config
+    AWS_STORAGE_BUCKET_NAME = 'rhysmoggs-boutique-ado'
+    AWS_S3_REGION_NAME = 'eu-west-2'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+```
+(use your bucket name and your region name accordingly)
+
+in heroku, go to your Config Vars, and add these variables - the values can be found in the csv document downloaded from AWS:
+`AWS_ACCESS_KEY_ID = ` (input value from csv download)
+`AWS_SECRET_ACCESS_KEY = `(input value from csv download)
+`USE_AWS = True`
+
+also, remove `DISABLE_COLLECTSTATIC` variable.
+
+in gitpod, boutique_ado > settings.py add the following to the bottom, under USE_AWS:
+```
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+```
+
+create a file named 'custom_storages' in the root (same place as README, Procfile, requirements.txt etc)
+and add the following to it:
+```
+from django.conf import settings
+from storages.backends.s3boto3 import S3Boto3Storage
+
+
+class StaticStorage(S3Boto3Storage):
+    location = settings.STATICFILES_LOCATION
+
+
+class MediaStorage(S3Boto3Storage):
+    location = settings.MEDIAFILES_LOCATION
+```
+
+boutique_ado > settings.py, update the if statement so it finally looks like
+(use your bucket name and your region name accordingly):
+```
+if 'USE_AWS' in os.environ:
+    # Bucket Config
+    AWS_STORAGE_BUCKET_NAME = 'rhysmoggs-boutique-ado'
+    AWS_S3_REGION_NAME = 'eu-west-2'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+    # Static and media files
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    STATICFILES_LOCATION = 'static'
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+    MEDIAFILES_LOCATION = 'media'
+
+    # Override static and media URLs in production
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
+```
+
+git add .
+git commit -m "Setup static files for deployment"
+git push
+
+It should build in heroku and copy the static files. open app in heroku. also, check the s3 
+bucket in AWS. It should contain the static files and folders.
+
+
+MEDIA FILES
+
+in boutique ado > settings.py, add the following on top of "# Bucket Config" witin 
+the "if 'USE_AWS' in os.environ:" statement:
+```
+# Cache control
+    AWS_S3_OBJECT_PARAMETERS = {
+        'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
+        'CacheControl': 'max-age=94608000',
+    }
+```
+
+git add .
+git commit -m "Added cache control"
+git push
+
+in AWS > s3, choose your bucket, then click 'Create folder' button. Name it "media".
+Inside he newly formed "media" folder, click 'Upload' button then click "Add files" button.
+Choose all of your product images (you can download from your repo or from source).
+Under the 'Permissions' section, tick the "Grant public-read access" option and "I understand..."
+for the warning.
+
+Click 'Upload' button
+
+We need to confirm the superuser email address on the postgres databse (heroku).
+In Heroku, Open App and go to /admin in the url.
+if "CSRF verification failed. Request aborted." error appears, close/refresh and open app again.
+Under Accounts, click Email Addresses, and select your email
+-if you dont see your email in the list, log in on website and then go back to admin. in gitpod > 
+boutique_ado > settings.py, make sure `ACCOUNT_EMAIL_VERIFICATION = 'mandatory'` instead of `'none'`
+(you'll need to add commit and push after the settings.py change)
+
+Next, go to Stripe website > Developers > API keys
+Copy the Publishable Key token.
+Go to your Heroku Config Vars and add STRIPE_PUBLIC_KEY and the copied token
+Then, repeat the same process but for copy the Secret key token and create the 
+STRIPE_SECRET_KEY variable in Heroku.
+
+"Now we need to create a new webhook endpoint since the current one is sending webhooks to our
+gitpod workspace."
+
+Stripe website > Developers > Webhooks > Add Endpoint button.
+Add the url for our Heroku app (followed by /checkout/wh/ - just like before)
+so it's like: https://your-app-name-here.herokuapp.com/checkout/wh/
+Click Select Events > tick Select All Events > click Add Events button
+Reveal the Signing secret key, copy it, and add it to the Heroku Config Vars as
+'STRIPE_WH_SECRET' and paste the Signing secret key.
+
+Test by purchasing a product through the Heroku app.
+
+
+Django Email Sending Setup
+
+Create a gmail account.
+Go to Settings > See all Settings > Accounts and Imports > Other Google Account settings.
+on the left, Security > Signing in to Google > 2-Step Verification > Get Started.
+Enter password > Next > Choose how to verify (text chosen) > Enter code > Turn On.
+Press the back arrow (on google, next to 2-Step Verification) to go back to the 'Security' page.
+Under 'Signing in to Google' again, click 'App passwords' > Enter password.
+'Select app' = Mail. 'Select device' = Other (Custom name), and name it: Django > Generate button.
+Cop the app password > Done.
+Heroku > Config Vars > add "EMAIL_HOST_PASS" with the copied app password.
+add another variable named "EMAIL_HOST_USER" and your email as the value.
+
+In gitpod, go to boutique-ado > "settings.py", delete `EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'`
+Scroll down to the #Stripe section, and update it to be:
+```
+# Stripe
+FREE_DELIVERY_THRESHOLD = 50
+STANDARD_DELIVERY_PERCENTAGE = 10
+STRIPE_CURRENCY = 'usd'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')
+
+if 'DEVELOPMENT' in os.environ:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = 587
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASS')
+    DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
+```
+and make sure `ACCOUNT_EMAIL_VERIFICATION = 'mandatory'` instead of `'none'`
+
+git add .
+git commit -m "sending real emails"
+git push
+
+"To test it out let's head to our Heroku app. And try to register for an account.
+I'll use a temporary email from tempmail.org. I've got the confirmation email which means email 
+is being sent properly. And now I can verify my account. And I'm able to login."
+
+Refactor Code
+Media Queries to improve responsiveness
+In gitpod, static > css > "base.css", update the last media query to now be:
+```
+/* pad the top a bit when navbar is collapsed on mobile */
+@media (max-width: 991px) {
+    .header-container {
+        padding-top: 116px;
+    }
+
+    body {
+        height: calc(100vh - 116px);
+    }
+
+    .display-4.logo-font.text-black {
+        font-size: 2rem;
+    }
+
+    .nav-link {
+        padding: 0.15rem;
+    }
+
+    .nav-link i.fa-lg {
+        font-size: 1rem;
+    }
+
+    .navbar-toggler {
+        padding: .6rem .6rem;
+        font-size: 1rem;
+    }
+
+    #delivery-banner h4 {
+        font-size: .9rem;
+    }
+
+    .btn.btn-outline-black.rounded-0,
+    .btn.btn-black.rounded-0 {
+        padding: .375rem .375rem;
+    }
+
+    .btn.btn-outline-black.rounded-0.btn-lg,
+    .btn.btn-black.rounded-0.btn-lg {
+        padding: .375rem .375rem;
+        font-size: .75rem;
+    }
+
+    .increment-qty, .decrement-qty {
+        padding: .25rem .5rem !important;
+    }
+}
+```
+
+templates > includes > "mobile-top-header.html", update line ~36 to be:
+`<a href="{% url 'profile' %}" class="dropdown-item">My Profile</a>`
+
+templates > includes > "main-nav.html", paste this into line 3:
+```
+        <li class="nav-item d-block d-md-none">
+            <a class="logo-font font-weight-bold nav-link text-black mr-5" href="{% url 'home' %}" id="home-link">
+                Home
+            </a>
+        </li>
+```
+so that it looks like:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/933797d5e14d6c3f072df31adf0ca6f938d02218/templates/includes/main-nav.html)
+
+`git add .`
+`git commit -m "base.css and login/register refactor"`
+`git push`
+
+
+Refactor Code for shopping bag on mobile
+
+We're going to split the bag.html table setup into a grid layour for the shopping bag on mobile only.
+To do this, we split up sections of the bag into seperate files:
+in bag > templates > bag, create new files named "product-image.html", "product-info.html", 
+"quantity-form.html", "bag-total.html" and "checkout-buttons.html"
+
+update "product-image.html" to be:
+```
+{% if item.product.image %}
+<img class="img-fluid rounded" src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+{% else %}
+<img class="img-fluid rounded" src="{{ MEDIA_URL }}noimage.png" alt="{{ item.product.name }}">
+{% endif %}
+```
+
+update "product-info.html" to be:
+```
+<p class="my-0"><strong>{{ item.product.name }}</strong></p>
+<p class="my-0"><strong>Size: </strong>{% if item.product.has_sizes %}{{ item.size|upper }}{% else %}N/A{% endif %}</p>
+<p class="my-0 small text-muted">SKU: {{ item.product.sku|upper }}</p>
+```
+
+update "quantity-form.html" to be (this is taken from a recent fix, not the original bag.html):
+```
+<form class="form update-form" method="POST" action="{% url 'adjust_bag' item.item_id %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="input-group input-group-{{ item.item_id }}">
+            <div class="input-group-prepend">
+                <button class="decrement-qty btn btn-sm btn-black rounded-0 decrement-qty_{{ item.item_id }} 
+                    {% if item.size %}decrement-size_{{ item.item_id }}_{{ item.size }}{% endif %}" 
+                    data-item_id="{{ item.item_id }}" data-size="{{ item.size }}">
+                    <span>
+                        <i class="fas fa-minus fa-sm"></i>
+                    </span>
+                </button>
+            </div>
+            <input class="form-control form-control-sm qty_input id_qty_{{ item.item_id }} 
+                {% if item.size %}size_{{ item.item_id }}_{{ item.size }}{% endif %}" type="number"
+                name="quantity" value="{{ item.quantity }}" min="1" max="99"
+                data-item_id="{{ item.item_id }}" data-size="{{ item.size }}">
+            <div class="input-group-append">
+                <button class="increment-qty btn btn-sm btn-black rounded-0 increment-qty_{{ item.item_id }} 
+                    {% if item.size %}increment-size_{{ item.item_id }}_{{ item.size }}{% endif %}"
+                    data-item_id="{{ item.item_id }}" data-size="{{ item.size }}">
+                    <span>
+                        <i class="fas fa-plus fa-sm"></i>
+                    </span>
+                </button>
+            </div>
+            {% if item.product.has_sizes %}
+                <input type="hidden" name="product_size" value="{{ item.size }}">
+            {% endif %}
+        </div>
+    </div>
+</form>
+<a class="update-link text-info"><small>Update</small></a>
+<a class="remove-item text-danger float-right" id="remove_{{ item.item_id }}" data-product_size="{{ item.size }}"><small>Remove</small></a>
+```
+
+update "bag-total.html" to be:
+```
+<h6><strong>Bag Total: ${{ total|floatformat:2 }}</strong></h6>
+<h6>Delivery: ${{ delivery|floatformat:2 }}</h6>
+<h4 class="mt-4"><strong>Grand Total: ${{ grand_total|floatformat:2 }}</strong></h4>
+{% if free_delivery_delta > 0 %}
+    <p class="mb-1 text-danger">
+        You could get free delivery by spending just <strong>${{ free_delivery_delta }}</strong> more!
+    </p>
+{% endif %}
+```
+
+update "checkout-buttons.html" to be:
+```
+<a href="{% url 'products' %}" class="btn btn-outline-black rounded-0 btn-lg">
+    <span class="icon">
+        <i class="fas fa-chevron-left"></i>
+    </span>
+    <span class="text-uppercase">Keep Shopping</span>
+</a>
+<a href="{% url 'checkout' %}" class="btn btn-black rounded-0 btn-lg">
+    <span class="text-uppercase">Secure Checkout</span>
+    <span class="icon">
+        <i class="fas fa-lock"></i>
+    </span>
+</a>
+```
+
+Then, delete each of the copied blocks from the original "bag.html" file, and replace them with the appropriate
+includes statements so that they look like:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/bag/templates/bag/bag.html)
+We've added a back-to-top button and some dividers too.
+
+in products > templates > products > includes > "quantity_input_script.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/products/templates/products/includes/quantity_input_script.html)
+- again, this is taken from a recent fix.
+
+in products > templates > products > "product_detail.html", update it to be:
+(https://github.com/Code-Institute-Solutions/boutique_ado_v1/blob/master/products/templates/products/product_detail.html)
+- again, this is taken from a recent fix.
+
+That's the project complete. Just need to test after pushing.
+
+`git add .`
+`git commit -m "shopping bag mobile refactor and duplicate id fix"`
+`git push`
+
+To check for linting errors, in CLI type: `python3 -m flake8`
